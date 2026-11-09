@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="en" data-app="site">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Teacher Tools — Build lessons, exercises, and assessments</title>
+<script src="app-core.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --text:#0F0F0F;
+  --muted:#606060;
+  --soft:#8A8A8A;
+  --chip:#F2F2F2;
+  --line:#E5E5E5;
+  --red:#FF0033;
+  --header-h:64px;
+  --sidebar-w:248px;
+  --font:"Roboto","Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;
+  min-width:320px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--text);color:#fff}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+input{font:inherit}
+button,input{color:inherit}
+a{color:inherit;text-decoration:none}
+svg{display:block}
+h1,h2,h3,p{overflow-wrap:break-word}
+.icon{
+  width:20px;height:20px;flex:none;
+  fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+:focus-visible{outline:2px solid #0F0F0F;outline-offset:3px;border-radius:8px}
+
+/* ---------- Header ---------- */
+.topbar{
+  position:fixed;inset:0 0 auto 0;height:var(--header-h);
+  display:grid;
+  grid-template-columns:var(--sidebar-w) minmax(0,1fr) auto;
+  align-items:center;gap:24px;
+  padding:0 24px;
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+  z-index:100;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;min-width:0}
+.logo-slot{
+  width:132px;height:38px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px dashed #F2B7C2;border-radius:10px;
+  background:#FFF7F8;color:var(--red);
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  transition:background .18s ease,border-color .18s ease;
+}
+.logo-slot:hover{background:#FFF0F3;border-color:var(--red)}
+.menu-toggle{display:none;width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;color:var(--text)}
+.menu-toggle:hover{background:var(--chip)}
+.search-zone{display:flex;align-items:center;gap:10px;justify-content:center;min-width:0;width:100%;max-width:860px;margin:0 auto}
+.search-shell{
+  display:flex;align-items:center;flex:1;min-width:0;height:50px;
+  padding:0 5px 0 20px;
+  background:#fff;border:1px solid #E1E1E1;border-radius:999px;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+.search-shell:focus-within{border-color:#0F0F0F;box-shadow:0 0 0 3px rgba(15,15,15,.06)}
+.search-input{
+  flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;
+  font-size:15.5px;color:var(--text);
+}
+.search-input::placeholder{color:#8A8A8A}
+.search-submit{
+  width:38px;height:38px;border-radius:50%;flex:none;
+  display:grid;place-items:center;
+  background:var(--chip);color:var(--text);
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.search-submit:hover{background:#0F0F0F;color:#fff}
+.search-submit:active{transform:scale(.94)}
+.topbar-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
+.btn-create{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:40px;padding:0 17px;border-radius:999px;
+  background:#0F0F0F;color:#fff;
+  font-size:14.5px;font-weight:600;letter-spacing:-.005em;
+  transition:background .18s ease,transform .18s ease;
+}
+.btn-create:hover{background:#2A2A2A}
+.btn-create:active{transform:scale(.98)}
+.btn-create .icon{width:18px;height:18px;stroke-width:2}
+.icon-btn{
+  position:relative;width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;color:#3C3C3C;
+  transition:background .18s ease;
+}
+.icon-btn:hover{background:var(--chip)}
+.icon-btn .icon{width:21px;height:21px}
+.badge{
+  position:absolute;top:2px;right:1px;
+  min-width:17px;height:17px;padding:0 4px;
+  display:grid;place-items:center;
+  background:var(--red);color:#fff;
+  border:2px solid #fff;border-radius:999px;
+  font-size:10px;font-weight:700;line-height:1;
+}
+.avatar-btn{position:relative;width:40px;height:40px;border-radius:50%;display:grid;place-items:center}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;overflow:hidden;
+  background:linear-gradient(140deg,#FF8A6B 0%,#FF3D5E 52%,#D5002B 100%);
+  color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.03em;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
+}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.avatar-btn:hover .avatar{box-shadow:0 0 0 3px #F3F3F3}
+.avatar-dot{
+  position:absolute;right:1px;bottom:1px;width:10px;height:10px;
+  background:#20A46A;border:2px solid #fff;border-radius:50%;
+}
+
+/* Header popovers */
+.menu-anchor{position:relative;display:flex;align-items:center}
+.popover{
+  position:absolute;top:calc(100% + 10px);right:0;
+  background:#fff;border:1px solid #ECECEC;border-radius:16px;
+  box-shadow:0 18px 50px rgba(15,15,15,.14);
+  padding:8px;z-index:150;
+  animation:popIn .16s ease both;
+}
+@keyframes popIn{from{opacity:0;transform:translateY(-6px) scale(.985)}to{opacity:1;transform:none}}
+.notif-popover{width:min(360px,calc(100vw - 24px));padding:0;overflow:hidden}
+.notif-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 16px 12px;
+}
+.notif-head h2{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.text-btn{font-size:12.5px;font-weight:600;color:#606060;padding:4px 6px;border-radius:7px}
+.text-btn:hover{background:#F4F4F4;color:#0F0F0F}
+.text-btn:disabled{color:#9A9A9A;cursor:default}
+.text-btn:disabled:hover{background:none}
+.notif-list{display:flex;flex-direction:column}
+.notif-item{
+  display:flex;gap:10px;align-items:flex-start;width:100%;
+  padding:12px 16px;text-align:left;transition:background .15s ease;
+}
+.notif-item:hover{background:#FAFAFA}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:var(--red);margin-top:6px;flex:none}
+.notif-item.read .notif-dot{background:#D9D9D9}
+.notif-copy{min-width:0}
+.notif-copy p{margin:0;font-size:13.5px;line-height:1.45;color:#3A3A3A}
+.notif-copy span{display:block;margin-top:3px;font-size:12px;color:#8A8A8A}
+.notif-foot{
+  width:100%;padding:13px;border-top:1px solid #F0F0F0;
+  font-size:13px;font-weight:600;color:#0F0F0F;text-align:center;
+}
+.notif-foot:hover{background:#FAFAFA}
+.popover-item{
+  display:flex;align-items:center;gap:11px;width:100%;
+  padding:10px 10px;border-radius:9px;
+  font-size:14px;font-weight:500;text-align:left;color:#2F2F2F;
+}
+.popover-item:hover{background:#F5F5F5}
+.popover-item .icon{width:18px;height:18px;color:#6A6A6A}
+.popover-item.danger{color:#D92D20}
+.popover-item.danger .icon{color:#D92D20}
+.popover-item.is-fav .icon{fill:currentColor}
+.popover-sep{height:1px;background:#F0F0F0;margin:6px 4px}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);
+  display:flex;flex-direction:column;
+  padding:20px 14px 18px;
+  background:#fff;border-right:1px solid #EDEDED;
+  overflow-y:auto;overscroll-behavior:contain;
+  z-index:90;scrollbar-width:thin;
+}
+.sidebar::-webkit-scrollbar{width:5px}
+.sidebar::-webkit-scrollbar-thumb{background:#E3E3E3;border-radius:9px}
+.side-group{margin-bottom:22px}
+.side-label{
+  margin:0 0 8px;padding:0 12px;
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#939393;
+}
+.side-label-row{display:flex;align-items:center;justify-content:space-between;padding-right:8px}
+.side-label-row .side-label{padding:0 12px}
+.mini-add{
+  width:24px;height:24px;border-radius:7px;
+  display:grid;place-items:center;color:#7A7A7A;
+}
+.mini-add:hover{background:#F2F2F2;color:#0F0F0F}
+.mini-add .icon{width:15px;height:15px;stroke-width:2}
+.side-link{
+  display:flex;align-items:center;gap:12px;
+  height:40px;padding:0 12px;border-radius:10px;
+  color:#454545;font-size:14.5px;font-weight:500;
+  transition:background .15s ease,color .15s ease;
+}
+.side-link .icon{width:19px;height:19px;color:#6E6E6E;stroke-width:1.75}
+.side-link:hover{background:#F7F7F7;color:#0F0F0F}
+.side-link:hover .icon{color:#0F0F0F}
+.side-link.active{background:#F2F2F2;color:#0F0F0F;font-weight:600}
+.side-link.active .icon{color:#0F0F0F}
+.side-count{
+  margin-left:auto;padding:2px 7px;border-radius:999px;
+  background:#ECECEC;color:#555;
+  font-size:11px;font-weight:600;line-height:1.4;
+}
+.side-link.active .side-count{background:#fff;color:#0F0F0F}
+.class-link{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:9px;
+  font-size:13.5px;color:#4C4C4C;
+  transition:background .15s ease;
+}
+.class-link:hover{background:#F7F7F7}
+.class-dot{width:8px;height:8px;border-radius:50%;background:var(--c,#1E7A5A);flex:none}
+.class-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.class-count{margin-left:auto;font-size:11.5px;color:#8E8E8E;flex:none}
+.side-footer{margin-top:auto;padding-top:14px;border-top:1px solid #F0F0F0}
+.sidebar-overlay{display:none}
+
+/* ---------- Main ---------- */
+.main{margin-left:var(--sidebar-w);padding-top:var(--header-h);min-height:100vh}
+.catbar{
+  position:sticky;top:var(--header-h);z-index:40;
+  height:80px;display:flex;align-items:center;
+  padding-left:40px;
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(10px);
+}
+.cat-scroll{
+  display:flex;align-items:center;gap:16px;
+  height:100%;width:100%;
+  padding:0 96px 0 0;
+  overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;-ms-overflow-style:none;
+  scroll-behavior:smooth;
+  scroll-padding-left:8px;
+}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-pill{
+  flex:none;height:42px;padding:0 22px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--chip);color:#0F0F0F;
+  border-radius:12px;
+  font-size:16px;font-weight:500;letter-spacing:-.005em;
+  white-space:nowrap;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.cat-pill:hover{background:#E9E9E9}
+.cat-pill:active{transform:scale(.98)}
+.cat-pill[aria-pressed="true"]{background:#0F0F0F;color:#fff}
+.cat-pill[aria-pressed="true"]:hover{background:#242424}
+.cat-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#fff;border:1px solid #E3E3E3;
+  box-shadow:0 2px 12px rgba(15,15,15,.09);
+  color:#0F0F0F;z-index:5;
+  transition:background .16s ease,color .16s ease,border-color .16s ease;
+}
+.cat-arrow:hover{background:#0F0F0F;border-color:#0F0F0F;color:#fff}
+.cat-arrow .icon{width:18px;height:18px;stroke-width:1.9}
+#catPrev{left:12px}
+#catNext{right:20px}
+.cat-fade{position:absolute;top:0;bottom:0;width:92px;pointer-events:none;z-index:4}
+.cat-fade.left{left:0;background:linear-gradient(90deg,#fff 34%,rgba(255,255,255,0))}
+.cat-fade.right{right:0;background:linear-gradient(270deg,#fff 36%,rgba(255,255,255,0))}
+.content{max-width:1680px;margin:0 auto;padding:30px 40px 96px}
+
+/* ---------- Tool grid ---------- */
+.tool-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:20px;row-gap:46px;
+}
+.tool-card{min-width:0;animation:cardIn .42s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--i,0) * 34ms)}
+.tool-card[data-content-id]{cursor:pointer}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.thumb{
+  position:relative;display:block;width:100%;aspect-ratio:16/9;
+  padding:0;overflow:hidden;border-radius:16px;
+  background:#F2F2F2;isolation:isolate;
+  box-shadow:inset 0 0 0 1px rgba(15,15,15,.035);
+  transition:box-shadow .3s ease,transform .3s ease;
+}
+.tool-card:hover .thumb{box-shadow:0 14px 34px rgba(15,15,15,.13),inset 0 0 0 1px rgba(15,15,15,.035)}
+.art-svg{width:100%;height:100%;display:block;transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.tool-card:hover .art-svg{transform:scale(1.025)}
+.thumb-cta{
+  position:absolute;left:14px;bottom:14px;z-index:2;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 12px;border-radius:999px;
+  background:rgba(255,255,255,.95);color:#0F0F0F;
+  box-shadow:0 4px 18px rgba(15,15,15,.12);
+  font-size:12.5px;font-weight:600;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .2s ease,transform .2s ease;
+  backdrop-filter:blur(8px);
+}
+.thumb-cta .icon{width:14px;height:14px;stroke-width:2}
+.tool-card:hover .thumb-cta,.thumb:focus-visible .thumb-cta{opacity:1;transform:none}
+.tool-info{
+  display:grid;grid-template-columns:38px minmax(0,1fr);
+  gap:12px;align-items:start;padding-top:14px;
+}
+.creator-avatar{
+  position:relative;
+  width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--cat-bg,#F2F2F2);color:var(--cat-fg,#0F0F0F);
+  margin-top:1px;flex:none;
+  font-size:13px;font-weight:700;letter-spacing:.02em;
+  box-shadow:inset 0 0 0 1px rgba(15,15,15,.05);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.creator-avatar:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(15,15,15,.16),inset 0 0 0 1px rgba(15,15,15,.04)}
+.creator-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.creator-avatar::before{
+  content:"";position:absolute;left:50%;bottom:calc(100% + 5px);
+  width:9px;height:9px;background:#0F0F0F;border-radius:2px;
+  transform:translate(-50%,3px) rotate(45deg);
+  opacity:0;pointer-events:none;z-index:60;
+  transition:opacity .15s ease,transform .15s ease;
+}
+.creator-avatar::after{
+  content:attr(data-name);
+  position:absolute;left:50%;bottom:calc(100% + 10px);
+  transform:translate(-50%,3px);
+  padding:7px 11px;border-radius:8px;
+  background:#0F0F0F;color:#fff;
+  font-size:12.5px;font-weight:500;letter-spacing:0;white-space:nowrap;
+  opacity:0;pointer-events:none;z-index:61;
+  transition:opacity .15s ease,transform .15s ease;
+}
+.creator-avatar:hover::before,.creator-avatar:focus-visible::before{opacity:1;transform:translate(-50%,0) rotate(45deg)}
+.creator-avatar:hover::after,.creator-avatar:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+.creator-avatar--lg{width:46px;height:46px;font-size:15px}
+.tool-main{min-width:0}
+.tool-header{display:flex;align-items:flex-start;gap:6px}
+.tool-title-btn{
+  flex:1;min-width:0;padding:0;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  text-align:left;
+  font-size:18px;font-weight:600;line-height:1.32;letter-spacing:-.014em;color:#0F0F0F;
+}
+.tool-title-btn:hover{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.tool-menu-btn{
+  width:30px;height:30px;flex:none;margin:-5px -4px 0 0;
+  border-radius:50%;display:grid;place-items:center;color:#7A7A7A;
+  transition:background .15s ease,color .15s ease;
+}
+.tool-menu-btn:hover{background:#F3F3F3;color:#0F0F0F}
+.tool-menu-btn .icon{width:18px;height:18px}
+.tool-menu-btn[aria-expanded="true"]{background:#F2F2F2;color:#0F0F0F}
+.tool-meta{
+  margin:5px 0 0;display:flex;align-items:center;flex-wrap:wrap;gap:6px;
+  font-size:14px;line-height:1.4;color:var(--muted);
+}
+.tool-meta .sep{color:#B3B3B3}
+.tool-creator{color:inherit;transition:color .15s ease}
+.tool-creator:hover{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1.5px}
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:76px 24px 96px;
+}
+.empty-icon{
+  width:66px;height:66px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#F4F4F4;color:#606060;margin-bottom:18px;
+}
+.empty-icon .icon{width:26px;height:26px}
+.empty-state h2{margin:0;font-size:21px;font-weight:600;letter-spacing:-.02em}
+.empty-state p{margin:8px 0 20px;max-width:380px;font-size:14.5px;color:#606060}
+.btn-primary{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:44px;padding:0 20px;border-radius:999px;
+  background:#0F0F0F;color:#fff;
+  font-size:14.5px;font-weight:600;
+  transition:background .18s ease,transform .18s ease;
+}
+.btn-primary:hover{background:#2A2A2A}
+.btn-primary:active{transform:scale(.98)}
+.btn-primary .icon{width:17px;height:17px}
+.btn-secondary{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:44px;padding:0 18px;border-radius:999px;
+  background:#fff;border:1px solid #E0E0E0;color:#0F0F0F;
+  font-size:14.5px;font-weight:600;
+  transition:background .18s ease,border-color .18s ease;
+}
+.btn-secondary:hover{background:#F6F6F6}
+.btn-secondary .icon{width:17px;height:17px}
+.btn-secondary.is-fav{background:#FFF0F3;border-color:#FFCED8;color:#C50028}
+.btn-secondary.is-fav .icon{fill:currentColor}
+
+/* ---------- Tool menu ---------- */
+.tool-menu{
+  position:fixed;top:0;left:0;right:auto;
+  width:216px;padding:8px;z-index:300;
+  animation:popIn .15s ease both;
+}
+.tool-menu .popover-item{padding:9px 10px}
+
+/* ---------- Content and profile pages ---------- */
+.doc-mode .topbar,.doc-mode .sidebar,.doc-mode .sidebar-overlay,.doc-mode .main{display:none}
+.doc-view{min-height:100vh;background:#fff}
+.doc-bar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:14px;
+  height:var(--header-h);padding:0 24px;
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.doc-logo{
+  width:92px;height:34px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px dashed #F2B7C2;border-radius:9px;
+  background:#FFF7F8;color:var(--red);
+  font-size:9.5px;font-weight:700;letter-spacing:.16em;
+}
+.doc-bar-sep{width:1px;height:22px;background:var(--line);flex:none}
+.doc-back{
+  display:inline-flex;align-items:center;gap:6px;
+  height:38px;padding:0 14px 0 10px;border-radius:999px;
+  font-size:14px;font-weight:500;color:#3C3C3C;
+  transition:background .16s ease,color .16s ease;
+}
+.doc-back:hover{background:var(--chip);color:var(--text)}
+.doc-back .icon{width:17px;height:17px}
+.doc-bar-spacer{flex:1}
+.doc-bar-label{font-size:13px;color:var(--muted);white-space:nowrap}
+.doc-main{max-width:1080px;margin:0 auto;padding:44px 32px 96px}
+.doc-article{max-width:940px;margin:0 auto}
+.doc-kicker{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.doc-type{
+  display:inline-flex;align-items:center;gap:7px;
+  height:32px;padding:0 13px;border-radius:9px;
+  background:var(--cat-bg,#F2F2F2);color:var(--cat-fg,#0F0F0F);
+  font-size:13px;font-weight:600;
+}
+.doc-type .icon{width:15px;height:15px;stroke-width:2}
+.doc-updated{font-size:13.5px;color:var(--muted)}
+.doc-title{
+  margin:0;max-width:830px;
+  font-size:clamp(28px,4vw,42px);font-weight:700;
+  line-height:1.12;letter-spacing:-.03em;
+}
+.doc-byline{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:22px}
+.doc-creator{
+  display:flex;align-items:center;gap:11px;
+  padding:5px 15px 5px 5px;border-radius:999px;
+  border:1px solid var(--line);
+  transition:background .16s ease;
+}
+.doc-creator:hover{background:#FAFAFA}
+.doc-creator-copy{display:flex;flex-direction:column;line-height:1.25}
+.doc-creator-copy strong{font-size:14px;font-weight:600}
+.doc-creator-copy span{font-size:12.5px;color:var(--muted)}
+.doc-detail{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted)}
+.doc-detail .icon{width:16px;height:16px;color:var(--soft)}
+.doc-cover{
+  margin-top:30px;aspect-ratio:16/9;
+  border-radius:20px;overflow:hidden;background:var(--chip);
+  box-shadow:inset 0 0 0 1px rgba(15,15,15,.04);
+}
+.doc-cover .art-svg{width:100%;height:100%}
+.doc-body{max-width:820px;margin:44px auto 0;font-size:15.5px;line-height:1.68;color:#3A3A3A}
+.doc-body .doc-intro{margin:0;font-size:17px;line-height:1.6;color:#333}
+.doc-body h2{margin:38px 0 12px;font-size:21px;font-weight:600;letter-spacing:-.02em;color:var(--text)}
+.doc-body p{margin:10px 0}
+.doc-body ul,.doc-body ol{margin:10px 0;padding-left:22px}
+.doc-body li{margin:7px 0}
+.doc-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px}
+.doc-info{background:#FAFAFA;border:1px solid #F0F0F0;border-radius:14px;padding:14px 16px}
+.doc-info span{display:block;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A8A8A}
+.doc-info strong{display:block;margin-top:5px;font-size:15.5px;font-weight:600;color:var(--text)}
+.doc-rule{border:0;border-top:1px solid var(--line);margin:32px 0}
+.doc-questions{list-style:none;padding:0;margin:0;counter-reset:item}
+.doc-question{border-bottom:1px solid var(--line);padding:18px 0}
+.doc-question:last-child{border-bottom:0}
+.doc-prompt{display:flex;gap:12px;margin:0;font-size:16px;font-weight:500;line-height:1.5;color:var(--text)}
+.doc-prompt b{flex:none;font-weight:600;color:#8A8A8A}
+.doc-answer-line{height:1px;background:#ECECEC;margin-top:20px}
+.doc-answer-line + .doc-answer-line{margin-top:16px}
+.doc-term-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.doc-term{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}
+.doc-term strong{display:block;font-size:15px;font-weight:600;color:var(--text)}
+.doc-term span{display:block;margin-top:5px;font-size:13.5px;color:var(--muted)}
+.doc-note{margin-top:30px;padding:16px 18px;border-radius:14px;background:#FAFAFA;border:1px solid #F0F0F0;font-size:14px;color:#555}
+.doc-note strong{color:var(--text)}
+
+/* ---------- Create modal ---------- */
+body.modal-open{overflow:hidden}
+.tool-modal{
+  width:min(520px,calc(100vw - 32px));
+  max-height:calc(100% - 48px);
+  margin:auto;padding:0;border:0;border-radius:20px;
+  background:#fff;color:var(--text);
+  box-shadow:0 32px 90px rgba(15,15,15,.3);
+  overflow:auto;
+}
+.tool-modal::backdrop{background:rgba(15,15,15,.46);backdrop-filter:blur(2px)}
+.tool-modal[open]{animation:modalIn .18s ease both}
+@keyframes modalIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+.tool-modal-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  padding:24px 22px 2px 24px;
+}
+.tool-modal-head h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.02em}
+.tool-modal-head p{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+.tool-category{padding:18px 24px 0}
+.tool-category label{
+  display:block;margin-bottom:7px;
+  font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8A8A;
+}
+.tool-select{position:relative}
+.tool-select select{
+  appearance:none;-webkit-appearance:none;
+  width:100%;height:46px;padding:0 42px 0 14px;
+  border:1px solid #E1E1E1;border-radius:12px;background:#fff;
+  font:500 14.5px/1 var(--font);color:var(--text);cursor:pointer;
+  transition:border-color .16s ease,box-shadow .16s ease;
+}
+.tool-select select:hover{border-color:#C9C9C9}
+.tool-select select:focus-visible{outline:0;border-color:#0F0F0F;box-shadow:0 0 0 3px rgba(15,15,15,.06)}
+.tool-select > .icon{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:#6A6A6A;pointer-events:none;
+}
+.modal-close{
+  width:36px;height:36px;border-radius:50%;flex:none;
+  display:grid;place-items:center;color:#5A5A5A;
+  transition:background .16s ease,color .16s ease;
+}
+.modal-close:hover{background:var(--chip);color:var(--text)}
+.modal-close .icon{width:19px;height:19px}
+.tool-list{display:flex;flex-direction:column;gap:4px;padding:12px 14px 20px}
+.tool-option{
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:12px;border-radius:14px;text-align:left;
+  transition:background .16s ease;
+}
+.tool-option:hover{background:#F7F7F7}
+.tool-option:focus-visible{outline-offset:-2px}
+.tool-option-ic{
+  width:44px;height:44px;border-radius:12px;flex:none;
+  display:grid;place-items:center;
+  background:var(--tool-bg,#F2F2F2);color:var(--tool-fg,#0F0F0F);
+}
+.tool-option-ic .icon{width:22px;height:22px}
+.tool-option-copy{flex:1;min-width:0}
+.tool-option-copy strong{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.tool-option-copy span{display:block;margin-top:2px;font-size:13px;line-height:1.35;color:var(--muted)}
+.tool-option-go{
+  display:inline-flex;align-items:center;gap:5px;flex:none;
+  font-size:12.5px;font-weight:600;color:#8A8A8A;
+  transition:color .16s ease;
+}
+.tool-option-go .icon{width:16px;height:16px}
+.tool-option:hover .tool-option-go{color:var(--text)}
+.tool-option.is-soon .tool-option-ic{opacity:.6}
+.tool-option.is-soon .tool-option-copy strong{color:#4A4A4A}
+.tool-soon{
+  flex:none;height:26px;padding:0 10px;border-radius:999px;
+  display:inline-flex;align-items:center;
+  background:var(--chip);color:#7A7A7A;
+  font-size:11.5px;font-weight:600;letter-spacing:.02em;
+}
+.tool-empty{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:32px 24px 30px;text-align:center;
+}
+.tool-empty .icon{width:26px;height:26px;color:#BFBFBF;margin-bottom:6px}
+.tool-empty strong{font-size:14.5px;font-weight:600}
+.tool-empty span{font-size:13px;line-height:1.4;color:var(--muted)}
+
+/* ---------- Builder workspace ---------- */
+.builder-mode{overflow:hidden}
+.builder-mode .main,.builder-mode .sidebar,.builder-mode .sidebar-overlay,.builder-mode .menu-toggle{display:none}
+.builder-view{position:fixed;inset:var(--header-h) 0 0 0;background:#F4F5F7;z-index:1}
+.builder-view iframe{display:block;width:100%;height:100%;border:0;background:#F4F5F7}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:28px;z-index:400;
+  display:flex;align-items:center;gap:8px;
+  max-width:calc(100vw - 32px);
+  padding:11px 18px;border-radius:999px;
+  background:#0F0F0F;color:#fff;
+  box-shadow:0 14px 34px rgba(0,0,0,.24);
+  font-size:13.5px;font-weight:500;
+  opacity:0;pointer-events:none;
+  transform:translate(-50%,14px);
+  transition:opacity .22s ease,transform .22s ease;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast .icon{width:16px;height:16px;color:#63E6A8;stroke-width:2.2}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1360px){
+  .catbar{padding-left:32px}
+  .content{padding:28px 32px 80px}
+}
+@media (max-width:1180px){
+  .tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}
+}
+@media (max-width:980px){
+  .topbar{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;padding:0 16px}
+  .menu-toggle{display:flex}
+  .logo-slot{width:112px;height:36px}
+  .search-zone{max-width:none}
+  .btn-create{width:42px;height:42px;padding:0;border-radius:50%}
+  .btn-create .btn-label{display:none}
+  .main{margin-left:0}
+  .sidebar{transform:translateX(-104%);transition:transform .28s cubic-bezier(.2,.7,.3,1),box-shadow .28s ease;z-index:95;box-shadow:none}
+  body.nav-open .sidebar{transform:none;box-shadow:0 24px 60px rgba(0,0,0,.18)}
+  .sidebar-overlay{
+    display:block;position:fixed;inset:var(--header-h) 0 0 0;
+    background:rgba(15,15,15,.34);z-index:85;
+    opacity:0;pointer-events:none;transition:opacity .24s ease;
+  }
+  body.nav-open .sidebar-overlay{opacity:1;pointer-events:auto}
+  body.nav-open{overflow:hidden}
+  .catbar{padding-left:24px}
+  .content{padding:26px 24px 76px}
+}
+@media (max-width:760px){
+  .topbar{gap:10px;padding:0 14px}
+  .logo-slot{width:88px;height:36px;font-size:10px}
+  .search-shell{height:48px;padding-left:16px}
+  .catbar{height:76px;padding-left:20px}
+  .cat-pill{height:40px;padding:0 19px;font-size:15px}
+  .cat-scroll{padding-right:78px;gap:13px}
+  #catNext{right:14px;width:36px;height:36px}
+  #catPrev{left:10px;width:36px;height:36px}
+  .content{padding:24px 20px 72px}
+  .doc-main{padding:36px 24px 80px}
+  .doc-byline{gap:14px}
+}
+@media (max-width:700px){
+  .tool-grid{grid-template-columns:minmax(0,1fr);row-gap:36px}
+  .content{padding:22px 20px 68px}
+}
+@media (max-width:560px){
+  .topbar{padding:0 12px;gap:8px}
+  .logo-slot{width:62px;height:34px;font-size:8.5px;letter-spacing:.14em;border-radius:9px}
+  .menu-toggle{width:36px;height:36px}
+  .topbar-left{gap:6px}
+  .topbar-right{gap:4px}
+  .btn-create{width:38px;height:38px}
+  .icon-btn{width:38px;height:38px}
+  .icon-btn .icon{width:20px;height:20px}
+  .avatar-btn{width:36px;height:36px}
+  .avatar{width:34px;height:34px;font-size:11.5px}
+  .search-shell{height:44px;padding:0 4px 0 14px}
+  .search-input{font-size:15px}
+  .search-submit{width:34px;height:34px}
+  .search-submit .icon{width:18px;height:18px}
+  .catbar{height:70px}
+  .cat-scroll{gap:11px;padding-right:64px}
+  .cat-pill{height:38px;padding:0 16px;font-size:14.5px;border-radius:11px}
+  .cat-arrow{width:32px;height:32px}
+  #catNext{right:10px}
+  #catPrev{left:8px}
+  .cat-fade{width:64px}
+  .thumb{border-radius:14px}
+  .tool-title-btn{font-size:17px}
+  .tool-meta{font-size:13.5px}
+  .doc-bar{padding:0 14px;gap:10px}
+  .doc-logo{width:62px;height:32px;font-size:7.5px;letter-spacing:.1em}
+  .doc-bar-label{display:none}
+  .doc-back{padding:0 12px 0 8px;font-size:13.5px}
+  .doc-main{padding:30px 20px 72px}
+  .doc-title{font-size:27px}
+  .doc-cover{border-radius:16px;margin-top:24px}
+  .doc-body{margin-top:34px;font-size:15px}
+  .doc-body h2{font-size:19px;margin-top:32px}
+  .doc-info-grid{grid-template-columns:1fr;gap:10px}
+  .doc-term-grid{grid-template-columns:1fr}
+  .notif-popover{right:-46px}
+}
+@media (max-width:400px){
+  .logo-slot{width:50px;font-size:8px;letter-spacing:.1em}
+  .tool-info{grid-template-columns:34px minmax(0,1fr);gap:10px}
+  .creator-avatar{width:34px;height:34px;font-size:12px}
+}
+@media (hover:none){
+  .thumb-cta{opacity:1;transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-delay:0ms !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
+</style>
+<link rel="stylesheet" href="app-theme.css">
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.2 16.2 4 4"/></symbol>
+  <symbol id="ic-bell" viewBox="0 0 24 24"><path d="M18 8.5a6 6 0 0 0-12 0c0 6.2-2.5 7.5-2.5 7.5h17S18 14.7 18 8.5Z"/><path d="M10.2 20a2.1 2.1 0 0 0 3.6 0"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="ic-dots" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.7" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="ic-chev-left" viewBox="0 0 24 24"><path d="m14.5 5-7 7 7 7"/></symbol>
+  <symbol id="ic-chev-right" viewBox="0 0 24 24"><path d="m9.5 5 7 7-7 7"/></symbol>
+  <symbol id="ic-chev-down" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a7.5 7.5 0 0 1-10.9 6.7L4.5 19.5l1.3-5.1A7.5 7.5 0 1 1 20.5 11.5Z"/><path d="M8.5 10.5h7M8.5 14h4.5"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 10.5 12 3l8 7.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5.5h4V20"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5Z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24"><path d="m12 3.6 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.8l5.9-.9L12 3.6Z"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6"/><path d="M17.5 14.4A5.5 5.5 0 0 1 21 20"/></symbol>
+  <symbol id="ic-graduation" viewBox="0 0 24 24"><path d="m2.5 9.5 9.5-4.5 9.5 4.5-9.5 4.5-9.5-4.5Z"/><path d="M6.5 11.5V16c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-4.5"/><path d="M21.5 9.5V15"/></symbol>
+  <symbol id="ic-headphones" viewBox="0 0 24 24"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><path d="M4.5 14h2.2a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V14Z"/><path d="M19.5 14h-2.2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1.2a1 1 0 0 0 1-1V14Z"/></symbol>
+  <symbol id="ic-clipboard" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="17" rx="2.5"/><path d="M9 4.5V3h6v1.5"/><path d="m8.5 12 2 2 4-4.5"/><path d="M15 17H9"/></symbol>
+  <symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7.5" y="12" width="3" height="5" rx="1"/><rect x="12.5" y="8" width="3" height="9" rx="1"/><rect x="17.5" y="5" width="3" height="12" rx="1"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+  <symbol id="ic-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.6 2.3c-.8.4-1.2 1-1.2 1.8"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h4"/></symbol>
+  <symbol id="ic-check-square" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8.5 12 2.4 2.5 4.8-5"/></symbol>
+  <symbol id="ic-pen" viewBox="0 0 24 24"><path d="m14.5 5.5 4 4"/><path d="M4.5 19.5 5.7 15 16.8 3.9a1.8 1.8 0 0 1 2.5 0l.8.8a1.8 1.8 0 0 1 0 2.5L9 18.3l-4.5 1.2Z"/></symbol>
+  <symbol id="ic-puzzle" viewBox="0 0 24 24"><path d="M10 4.5a2 2 0 0 1 4 0V6h2.5A1.5 1.5 0 0 1 18 7.5V10h1.5a2 2 0 1 1 0 4H18v2.5a1.5 1.5 0 0 1-1.5 1.5H14v1.5a2 2 0 1 1-4 0V18H7.5A1.5 1.5 0 0 1 6 16.5V14H4.5a2 2 0 1 1 0-4H6V7.5A1.5 1.5 0 0 1 7.5 6H10V4.5Z"/></symbol>
+  <symbol id="ic-layers" viewBox="0 0 24 24"><path d="m12 3.5 8.5 4.5L12 12.5 3.5 8 12 3.5Z"/><path d="m4 12.5 8 4.2 8-4.2"/><path d="m4 16.5 8 4.2 8-4.2"/></symbol>
+  <symbol id="ic-monitor" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="12" rx="2"/><path d="M12 16.5V20M8.5 20h7"/></symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 .8.8L6 5"/><path d="m3.5 12 .8.8L6 11"/><path d="m3.5 18 .8.8L6 17"/></symbol>
+  <symbol id="ic-maximize" viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></symbol>
+  <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+  <symbol id="ic-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5v-2a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></symbol>
+  <symbol id="ic-share" viewBox="0 0 24 24"><circle cx="17.5" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/><path d="m8.2 10.8 6.9-4M8.2 13.2l6.9 4"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+  <symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="ic-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></symbol>
+  <symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="ic-logout" viewBox="0 0 24 24"><path d="M14 4.5H6.5A1.5 1.5 0 0 0 5 6v12a1.5 1.5 0 0 0 1.5 1.5H14"/><path d="M11 12h9"/><path d="m16.5 8.5 3.5 3.5-3.5 3.5"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z"/></symbol>
+</svg>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+      <svg class="icon" aria-hidden="true"><use href="#ic-menu"/></svg>
+    </button>
+    <a class="logo-slot" href="#" id="logoHome" aria-label="Home — logo placeholder">LOGO</a>
+  </div>
+
+  <form class="search-zone" id="searchForm" role="search">
+    <div class="search-shell">
+      <input class="search-input" id="searchInput" type="search" name="q" placeholder="Search" autocomplete="off" aria-label="Search">
+      <button class="search-submit" type="submit" aria-label="Search">
+        <svg class="icon" aria-hidden="true"><use href="#ic-search"/></svg>
+      </button>
+    </div>
+  </form>
+
+  <div class="topbar-right">
+    <button class="btn-create" id="createBtn" type="button" aria-haspopup="dialog" aria-controls="toolModal">
+      <svg class="icon" aria-hidden="true"><use href="#ic-plus"/></svg>
+      <span class="btn-label">Create</span>
+    </button>
+
+    <div class="menu-anchor">
+      <button class="icon-btn" id="bellBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="notifMenu" aria-label="Notifications, 3 unread">
+        <svg class="icon" aria-hidden="true"><use href="#ic-bell"/></svg>
+        <span class="badge" id="notifBadge">3</span>
+      </button>
+      <div class="popover notif-popover" id="notifMenu" role="menu" hidden>
+        <div class="notif-head">
+          <h2>Notifications</h2>
+          <button class="text-btn" id="markRead" type="button">Mark all read</button>
+        </div>
+        <div class="notif-list">
+          <button class="notif-item" type="button" data-notif>
+            <span class="notif-dot" aria-hidden="true"></span>
+            <span class="notif-copy"><p>Maya Chen shared an “Ecosystems” worksheet with you.</p><span>12 minutes ago</span></span>
+          </button>
+          <button class="notif-item" type="button" data-notif>
+            <span class="notif-dot" aria-hidden="true"></span>
+            <span class="notif-copy"><p>24 students submitted the Cell Biology quiz.</p><span>1 hour ago</span></span>
+          </button>
+          <button class="notif-item" type="button" data-notif>
+            <span class="notif-dot" aria-hidden="true"></span>
+            <span class="notif-copy"><p>Assignment due tomorrow: Algebra I · Period 6.</p><span>Yesterday</span></span>
+          </button>
+        </div>
+        <button class="notif-foot" type="button" id="viewAllNotifs">View all notifications</button>
+      </div>
+    </div>
+
+    <div class="menu-anchor account-anchor" id="accountAnchor">
+      <button class="avatar-btn" id="accountBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="accountMenu" aria-label="Account menu">
+        <span class="avatar" id="accountAvatar" aria-hidden="true">AM</span>
+        <span class="avatar-dot" aria-hidden="true"></span>
+      </button>
+      <div class="popover account-popover" id="accountMenu" role="menu" hidden>
+        <a class="popover-item" id="accountProfileLink" role="menuitem" href="profile.html?user=alex">
+          <svg class="icon" aria-hidden="true"><use href="#ic-user"/></svg>See Profile
+        </a>
+        <button class="popover-item" id="accountSignOut" type="button" role="menuitem">
+          <svg class="icon" aria-hidden="true"><use href="#ic-logout"/></svg>Sign Out
+        </button>
+      </div>
+    </div>
+    <button class="btn-signin" id="signInBtn" type="button" hidden>Sign In</button>
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <nav>
+    <div class="side-group">
+      <p class="side-label">Workspace</p>
+      <a class="side-link active" href="#" data-nav="Home" aria-current="page">
+        <svg class="icon" aria-hidden="true"><use href="#ic-home"/></svg>Home
+      </a>
+      <a class="side-link" href="#" data-nav="Favorites">
+        <svg class="icon" aria-hidden="true"><use href="#ic-star"/></svg>Favorites
+      </a>
+      <a class="side-link" href="#" data-nav="Recent">
+        <svg class="icon" aria-hidden="true"><use href="#ic-clock"/></svg>Recent
+      </a>
+    </div>
+  </nav>
+
+  <div class="side-footer">
+    <div class="side-appearance" aria-labelledby="appearanceLabel">
+      <p class="side-label" id="appearanceLabel">Appearance</p>
+      <div class="theme-toggle" role="group" aria-label="Appearance theme">
+        <button class="theme-option" type="button" data-theme-value="light" aria-pressed="true">
+          <svg class="icon" aria-hidden="true"><use href="#ic-sun"/></svg>Light
+        </button>
+        <button class="theme-option" type="button" data-theme-value="dark" aria-pressed="false">
+          <svg class="icon" aria-hidden="true"><use href="#ic-moon"/></svg>Dark
+        </button>
+      </div>
+    </div>
+    <a class="side-link" href="#" data-nav="Settings">
+      <svg class="icon" aria-hidden="true"><use href="#ic-settings"/></svg>Settings
+    </a>
+    <a class="side-link" href="#" data-nav="Help &amp; support">
+      <svg class="icon" aria-hidden="true"><use href="#ic-help"/></svg>Help &amp; support
+    </a>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+<main class="main" id="main">
+  <div class="catbar" aria-label="Content categories">
+    <div class="cat-fade left" id="catFadeLeft" hidden></div>
+    <div class="cat-fade right" id="catFadeRight" hidden></div>
+    <button class="cat-arrow" id="catPrev" type="button" aria-label="Scroll categories left" hidden>
+      <svg class="icon" aria-hidden="true"><use href="#ic-chev-left"/></svg>
+    </button>
+    <button class="cat-arrow" id="catNext" type="button" aria-label="Scroll categories right" hidden>
+      <svg class="icon" aria-hidden="true"><use href="#ic-chev-right"/></svg>
+    </button>
+    <div class="cat-scroll" id="catScroll" role="group" aria-label="Filter content by category"></div>
+  </div>
+
+  <div class="content">
+    <div class="tool-grid" id="toolGrid"></div>
+
+    <div class="empty-state" id="emptyState" hidden>
+      <div class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#ic-search"/></svg></div>
+      <h2>No content found</h2>
+      <p id="emptyCopy">Try a different keyword or browse another category.</p>
+      <button class="btn-primary" id="clearFilters" type="button">Clear filters</button>
+    </div>
+  </div>
+</main>
+
+<div class="builder-view" id="builderView" hidden>
+  <iframe id="builderFrame" title="IELTS Reading Test Builder" data-src="ielts-reading-test-builder.html" hidden></iframe>
+  <iframe id="listeningFrame" title="IELTS Listening Test Builder" data-src="ielts-listening-test-builder.html" hidden></iframe>
+</div>
+
+<dialog class="tool-modal" id="toolModal" aria-labelledby="toolModalTitle">
+  <div class="tool-modal-head">
+    <div>
+      <h2 id="toolModalTitle">Create</h2>
+      <p>Choose a builder to open in a new tab.</p>
+    </div>
+    <button class="modal-close" id="toolModalClose" type="button" aria-label="Close">
+      <svg class="icon" aria-hidden="true"><use href="#ic-x"/></svg>
+    </button>
+  </div>
+  <div class="tool-category">
+    <label for="toolCategory">Category</label>
+    <div class="tool-select">
+      <select id="toolCategory"></select>
+      <svg class="icon" aria-hidden="true"><use href="#ic-chev-down"/></svg>
+    </div>
+  </div>
+  <div class="tool-list" id="toolList"></div>
+</dialog>
+
+<div class="popover tool-menu" id="toolMenu" role="menu" hidden>
+  <button class="popover-item" type="button" role="menuitem" data-action="open">
+    <svg class="icon" aria-hidden="true"><use href="#ic-maximize"/></svg>Open in new tab
+  </button>
+  <button class="popover-item" type="button" role="menuitem" data-action="favorite">
+    <svg class="icon" aria-hidden="true"><use href="#ic-star"/></svg><span>Add to favorites</span>
+  </button>
+  <div class="popover-sep"></div>
+  <button class="popover-item" type="button" role="menuitem" data-action="copy">
+    <svg class="icon" aria-hidden="true"><use href="#ic-copy"/></svg>Copy link
+  </button>
+</div>
+
+<div class="doc-view" id="docView" hidden></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg class="icon" aria-hidden="true"><use href="#ic-check"/></svg>
+  <span id="toastText"></span>
+</div>
+<p class="sr-only" id="live" aria-live="polite"></p>
+
+<script>
+const TOOL_GROUPS = [
+  { id:'ielts',   label:'IELTS',   tools:['listening','reading','writing','speaking'] },
+  { id:'toeic',   label:'TOEIC',   tools:['toeic-listening','toeic-reading','toeic-writing','toeic-speaking'] },
+  { id:'lessons', label:'Lessons', tools:[] },
+  { id:'general', label:'General', tools:['multiple-choice','drag-drop','gap-filling'] },
+  { id:'others',  label:'Others',  tools:['graduation'] }
+];
+
+const TOOLS = {
+  listening:         { label:'IELTS Listening', name:'IELTS Listening Test', group:'ielts', icon:'headphones', bg:'#E7EFFC', fg:'#1F6DD6',
+                       desc:'Assemble listening parts and full practice tests.', href:'#builder=listening' },
+  reading:           { label:'IELTS Reading', name:'IELTS Reading Test', group:'ielts', icon:'book', bg:'#E4F2EA', fg:'#1E7A5A',
+                       desc:'Build reading passages, question sets, and full practice tests.', href:'#builder=reading' },
+  writing:           { label:'IELTS Writing', name:'IELTS Writing Test', group:'ielts', icon:'pen', bg:'#FBEFE4', fg:'#B45B16',
+                       desc:'Create writing tasks with model answers and band descriptors.', soon:true },
+  speaking:          { label:'IELTS Speaking', name:'IELTS Speaking Test', group:'ielts', icon:'chat', bg:'#FCE7EF', fg:'#C2185B',
+                       desc:'Set up speaking prompts and timed practice rounds.', soon:true },
+  'toeic-listening': { label:'TOEIC Listening', name:'TOEIC Listening Test', group:'toeic', icon:'headphones', bg:'#E7EFFC', fg:'#1F6DD6',
+                       desc:'Build photo, question-response, and conversation sets.', soon:true },
+  'toeic-reading':   { label:'TOEIC Reading', name:'TOEIC Reading Test', group:'toeic', icon:'book', bg:'#E4F2EA', fg:'#1E7A5A',
+                       desc:'Assemble reading comprehension and vocabulary sections.', soon:true },
+  'toeic-writing':   { label:'TOEIC Writing', name:'TOEIC Writing Test', group:'toeic', icon:'pen', bg:'#FBEFE4', fg:'#B45B16',
+                       desc:'Create picture prompts and opinion essays with rubrics.', soon:true },
+  'toeic-speaking':  { label:'TOEIC Speaking', name:'TOEIC Speaking Test', group:'toeic', icon:'chat', bg:'#FCE7EF', fg:'#C2185B',
+                       desc:'Prepare read-aloud and response prompts with timing.', soon:true },
+  'multiple-choice': { label:'Multiple Choice', name:'Multiple Choice', group:'general', icon:'check-square', bg:'#ECEAFD', fg:'#5B4BE0',
+                       desc:'Turn any topic into a scored multiple-choice set.', soon:true },
+  'drag-drop':       { label:'Drag & Drop', name:'Drag & Drop', group:'general', icon:'puzzle', bg:'#F2EAFB', fg:'#8A3FD1',
+                       desc:'Build matching and ordering activities students drag into place.', soon:true },
+  'gap-filling':     { label:'Gap-filling', name:'Gap-filling', group:'general', icon:'list', bg:'#FBEFE4', fg:'#B45B16',
+                       desc:'Create cloze passages with instant answer checking.', soon:true },
+  graduation:        { label:'Graduation Test', name:'High School Graduation Test', group:'others', icon:'graduation', bg:'#ECEAFD', fg:'#5B4BE0',
+                       desc:'Create graduation exam exercises and full papers.', soon:true },
+  lesson:            { label:'Lesson', name:'Lesson', group:'lessons', icon:'book', bg:'#E4F2EA', fg:'#1E7A5A' }
+};
+
+const GROUPS_BY_ID = Object.fromEntries(TOOL_GROUPS.map((group) => [group.id, group]));
+
+const NAV_ITEMS = [{ key:'all', label:'All', icon:'compass' }];
+TOOL_GROUPS.forEach((group) => {
+  NAV_ITEMS.push({ key:`group:${group.id}`, label:group.label });
+  group.tools.forEach((id) => NAV_ITEMS.push({ key:`tool:${id}`, label:TOOLS[id].label }));
+});
+const NAV_ORDER = NAV_ITEMS.map((item) => item.key);
+const NAV_BY_KEY = Object.fromEntries(NAV_ITEMS.map((item) => [item.key, item]));
+
+const USERS = {
+  maya:   { name:'Maya Chen',     initials:'MC', role:'Biology teacher',  school:'Northfield High School', bg:'#E4F2EA', fg:'#1E7A5A', followers:126,
+            bio:'Biology teacher at Northfield High School. I turn dense science units into hands-on labs, quick checks, and review games students actually enjoy.' },
+  daniel: { name:'Daniel Okafor', initials:'DO', role:'History teacher',  school:'Northfield High School', bg:'#ECEAFD', fg:'#5B4BE0', followers:98,
+            bio:'History teacher at Northfield High School. I build document-based exams and projects that help students think like historians.' },
+  priya:  { name:'Priya Raman',   initials:'PR', role:'Math teacher',     school:'Riverside Academy',     bg:'#FBEFE4', fg:'#B45B16', followers:214,
+            bio:'Math teacher at Riverside Academy. I write differentiated practice sets and visual lessons that make abstract ideas concrete.' },
+  olivia: { name:'Olivia Brooks', initials:'OB', role:'English teacher',  school:'Riverside Academy',     bg:'#FCE7EF', fg:'#C2185B', followers:163,
+            bio:'English teacher at Riverside Academy. I create close-reading quizzes and writing prompts built around mentor texts.' },
+  lucas:  { name:'Lucas Meyer',   initials:'LM', role:'Language teacher', school:'Northfield High School', bg:'#E3F4F4', fg:'#0E8C8C', followers:87,
+            bio:'Language teacher at Northfield High School. I design vocabulary decks and speaking activities for beginning language learners.' },
+  alex:   { name:'Alex Morgan',   initials:'AM', role:'Science teacher',  school:'Lincoln High School',    bg:'linear-gradient(140deg,#FF8A6B 0%,#FF3D5E 52%,#D5002B 100%)', fg:'#FFFFFF', followers:148,
+            bio:'Science teacher at Lincoln High School. I share lab safety materials, biology reviews, and classroom-ready assessments.' }
+};
+
+const CURRENT_USER_ID = 'alex';
+
+function applySavedProfiles() {
+  const savedAll = TeacherTools.profiles.all();
+  Object.keys(savedAll).forEach((id) => {
+    const user = USERS[id];
+    const saved = savedAll[id];
+    if (!user || !saved || typeof saved !== 'object') return;
+    if (saved.name) {
+      user.name = saved.name;
+      user.initials = saved.name.trim().split(/\s+/).filter(Boolean).slice(0, 2)
+        .map((part) => part[0]).join('').toUpperCase() || user.initials;
+    }
+    if (typeof saved.bio === 'string') user.bio = saved.bio;
+    if (saved.avatar) user.avatar = saved.avatar;
+    else delete user.avatar;
+  });
+}
+applySavedProfiles();
+
+const ART = {
+  planner: `
+    <rect width="640" height="360" fill="#E7F2EC"/>
+    <circle cx="572" cy="46" r="120" fill="#D6EADF"/>
+    <circle cx="70" cy="330" r="90" fill="#F4FAF7"/>
+    <g transform="translate(82 250) rotate(-12)">
+      <rect x="4" y="6" width="112" height="86" rx="10" fill="#0F0F0F" opacity=".06"/>
+      <rect width="112" height="86" rx="10" fill="#FFE8A3"/>
+      <rect x="14" y="16" width="56" height="7" rx="3.5" fill="#E4C35A"/>
+      <rect x="14" y="32" width="84" height="6" rx="3" fill="#F1D781"/>
+      <rect x="14" y="46" width="66" height="6" rx="3" fill="#F1D781"/>
+      <rect x="14" y="60" width="78" height="6" rx="3" fill="#F1D781"/>
+    </g>
+    <g transform="translate(162 42)">
+      <rect x="5" y="10" width="328" height="274" rx="18" fill="#0F0F0F" opacity=".07"/>
+      <rect width="328" height="274" rx="18" fill="#FFFFFF"/>
+      <rect x="24" y="24" width="36" height="36" rx="10" fill="#1E7A5A"/>
+      <path d="M34 34h16M34 42h16" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+      <rect x="72" y="27" width="128" height="10" rx="5" fill="#15251E"/>
+      <rect x="72" y="45" width="84" height="7" rx="3.5" fill="#A3B3AB"/>
+      <rect x="252" y="28" width="52" height="24" rx="12" fill="#EAF4EF"/>
+      <text x="278" y="44" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="600" fill="#1E7A5A">45 MIN</text>
+      <rect x="24" y="84" width="280" height="1.5" fill="#EDF1EE"/>
+      <g font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="500" text-anchor="middle" fill="#7A8A81">
+        <circle cx="44" cy="107" r="13" fill="#F3F7F5"/><text x="44" y="111">M</text>
+        <circle cx="100" cy="107" r="13" fill="#F3F7F5"/><text x="100" y="111">T</text>
+        <circle cx="156" cy="107" r="13" fill="#1E7A5A"/><text x="156" y="111" fill="#FFFFFF">W</text>
+        <circle cx="212" cy="107" r="13" fill="#F3F7F5"/><text x="212" y="111">T</text>
+        <circle cx="268" cy="107" r="13" fill="#F3F7F5"/><text x="268" y="111">F</text>
+      </g>
+      <circle cx="36" cy="147" r="10" fill="#DFF0E7"/>
+      <path d="m31.5 147 3 3 5.5-6" stroke="#1E7A5A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="56" y="139" width="132" height="8" rx="4" fill="#DCE6E1"/>
+      <rect x="56" y="154" width="90" height="6" rx="3" fill="#EFF3F1"/>
+      <rect x="246" y="141" width="54" height="20" rx="10" fill="#E7F2EC"/>
+      <rect x="36" y="181" width="264" height="1" fill="#F2F5F3"/>
+      <circle cx="36" cy="207" r="10" fill="#DFF0E7"/>
+      <path d="m31.5 207 3 3 5.5-6" stroke="#1E7A5A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="56" y="199" width="158" height="8" rx="4" fill="#DCE6E1"/>
+      <rect x="56" y="214" width="74" height="6" rx="3" fill="#EFF3F1"/>
+      <rect x="246" y="201" width="54" height="20" rx="10" fill="#F5F2E7"/>
+      <rect x="36" y="241" width="264" height="1" fill="#F2F5F3"/>
+      <circle cx="36" cy="258" r="10" fill="#F3F7F5" stroke="#C9DED3" stroke-width="1.5"/>
+      <rect x="56" y="254" width="118" height="8" rx="4" fill="#E9EFEC"/>
+      <g transform="translate(266 238)">
+        <circle cx="18" cy="18" r="18" fill="#1E7A5A"/>
+        <path d="m11 18 5 5 9-10" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>`,
+  quiz: `
+    <rect width="640" height="360" fill="#FCE7EE"/>
+    <circle cx="88" cy="62" r="98" fill="#F9D3DF"/>
+    <circle cx="588" cy="330" r="118" fill="#FADDE7"/>
+    <circle cx="540" cy="52" r="7" fill="#F0B6C7"/>
+    <circle cx="86" cy="284" r="5" fill="#F0B6C7"/>
+    <g transform="translate(168 32)">
+      <rect x="6" y="10" width="304" height="300" rx="18" fill="#6D0C2A" opacity=".08"/>
+      <rect width="304" height="300" rx="18" fill="#FFFFFF"/>
+      <text x="24" y="40" font-family="Roboto, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.5" fill="#C2185B">QUESTION 3 OF 12</text>
+      <rect x="24" y="52" width="256" height="6" rx="3" fill="#F7DFE7"/>
+      <rect x="24" y="52" width="64" height="6" rx="3" fill="#C2185B"/>
+      <text x="24" y="92" font-family="Roboto, Arial, sans-serif" font-size="16" font-weight="600" fill="#141414">Which process releases</text>
+      <text x="24" y="113" font-family="Roboto, Arial, sans-serif" font-size="16" font-weight="600" fill="#141414">energy from food?</text>
+      <g font-family="Roboto, Arial, sans-serif" font-size="13" font-weight="500">
+        <rect x="24" y="132" width="256" height="32" rx="10" fill="#F7F7F7"/>
+        <circle cx="42" cy="148" r="9" fill="#FFFFFF"/>
+        <text x="42" y="152" text-anchor="middle" font-size="10" font-weight="700" fill="#7A7A7A">A</text>
+        <text x="60" y="153" fill="#333333">Photosynthesis</text>
+        <rect x="24" y="172" width="256" height="32" rx="10" fill="#FDF0F4" stroke="#C2185B" stroke-width="1.5"/>
+        <circle cx="42" cy="188" r="9" fill="#C2185B"/>
+        <text x="42" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">B</text>
+        <text x="60" y="193" fill="#141414" font-weight="600">Respiration</text>
+        <circle cx="260" cy="188" r="9" fill="#C2185B"/>
+        <path d="m255.5 188 3 3 5.5-6" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="24" y="212" width="256" height="32" rx="10" fill="#F7F7F7"/>
+        <circle cx="42" cy="228" r="9" fill="#FFFFFF"/>
+        <text x="42" y="232" text-anchor="middle" font-size="10" font-weight="700" fill="#7A7A7A">C</text>
+        <text x="60" y="233" fill="#333333">Digestion</text>
+      </g>
+      <rect x="24" y="264" width="140" height="8" rx="4" fill="#EFEFEF"/>
+      <rect x="172" y="264" width="108" height="8" rx="4" fill="#F5F5F5"/>
+    </g>
+    <g transform="translate(500 240)">
+      <circle cx="0" cy="0" r="44" fill="#FFFFFF"/>
+      <circle cx="0" cy="0" r="44" fill="none" stroke="#F3C4D2" stroke-width="2" stroke-dasharray="3 6"/>
+      <text x="0" y="-5" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="11" font-weight="600" fill="#A0244B">SCORE</text>
+      <text x="0" y="19" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="22" font-weight="700" fill="#C2185B">82%</text>
+    </g>`,
+  worksheet: `
+    <rect width="640" height="360" fill="#E9F1FC"/>
+    <circle cx="560" cy="56" r="112" fill="#D8E6FA"/>
+    <circle cx="76" cy="320" r="82" fill="#F3F7FE"/>
+    <g transform="rotate(-4 320 180)">
+      <rect x="190" y="44" width="300" height="312" rx="16" fill="#1F6DD6" opacity=".1"/>
+      <rect x="184" y="34" width="300" height="312" rx="16" fill="#FFFFFF"/>
+      <rect x="210" y="56" width="128" height="11" rx="5.5" fill="#16263D"/>
+      <rect x="210" y="76" width="86" height="7" rx="3.5" fill="#9DB3CE"/>
+      <rect x="210" y="100" width="248" height="1.5" fill="#E7EEF7"/>
+      <g font-family="Roboto, Arial, sans-serif" font-size="11" font-weight="600">
+        <circle cx="220" cy="122" r="9" fill="#E8F1FD"/><text x="220" y="126" text-anchor="middle" fill="#1F6DD6">1</text>
+        <rect x="237" y="118" width="88" height="7" rx="3.5" fill="#D8E2EF"/>
+        <rect x="237" y="130" width="60" height="5" rx="2.5" fill="#EDF2F9"/>
+        <circle cx="220" cy="156" r="9" fill="#E8F1FD"/><text x="220" y="160" text-anchor="middle" fill="#1F6DD6">2</text>
+        <rect x="237" y="152" width="72" height="7" rx="3.5" fill="#D8E2EF"/>
+        <rect x="237" y="164" width="88" height="5" rx="2.5" fill="#EDF2F9"/>
+        <circle cx="220" cy="190" r="9" fill="#E8F1FD"/><text x="220" y="194" text-anchor="middle" fill="#1F6DD6">3</text>
+        <rect x="237" y="186" width="84" height="7" rx="3.5" fill="#D8E2EF"/>
+        <rect x="237" y="198" width="54" height="5" rx="2.5" fill="#EDF2F9"/>
+      </g>
+      <rect x="210" y="218" width="248" height="1.5" fill="#E7EEF7"/>
+      <g transform="translate(220 246)">
+        <circle cx="16" cy="16" r="14" fill="#DDEBFC" stroke="#7EA6E8" stroke-width="2"/>
+        <rect x="46" y="2" width="28" height="28" rx="4" fill="#FFE8A3"/>
+        <path d="M108 2 122 30H94L108 2Z" fill="#C9DBF5"/>
+        <circle cx="150" cy="16" r="2.5" fill="#B7C9E0"/><circle cx="162" cy="16" r="2.5" fill="#B7C9E0"/><circle cx="174" cy="16" r="2.5" fill="#B7C9E0"/>
+      </g>
+      <rect x="210" y="288" width="248" height="7" rx="3.5" fill="#EFF3F9"/>
+      <rect x="210" y="304" width="196" height="7" rx="3.5" fill="#EFF3F9"/>
+      <rect x="210" y="320" width="224" height="7" rx="3.5" fill="#EFF3F9"/>
+    </g>
+    <g transform="translate(486 208) rotate(38)">
+      <rect width="22" height="124" rx="9" fill="#FFC84A"/>
+      <path d="M0 124 11 150 22 124Z" fill="#F3DFB4"/>
+      <path d="m7 139 4 11 4-11Z" fill="#3F3F3F"/>
+      <rect x="0" y="-15" width="22" height="19" rx="6" fill="#F3A9B9"/>
+      <rect x="0" y="2" width="22" height="5" fill="#FFDDA0"/>
+    </g>
+    <g transform="translate(494 64)">
+      <circle cx="0" cy="0" r="27" fill="#E3F4EC"/>
+      <path d="m-10 0 6.5 6.5 13-14" fill="none" stroke="#1E7A5A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>`,
+  flashcards: `
+    <rect width="640" height="360" fill="#E3F2F1"/>
+    <circle cx="90" cy="60" r="94" fill="#F2FAF9"/>
+    <circle cx="576" cy="316" r="104" fill="#D4EBE9"/>
+    <g transform="translate(188 52) rotate(-12)">
+      <rect width="250" height="156" rx="16" fill="#0B5B5B"/>
+      <rect x="22" y="22" width="88" height="8" rx="4" fill="#5FB8B3" opacity=".7"/>
+      <text x="22" y="76" font-family="Roboto, Arial, sans-serif" font-size="18" font-weight="600" fill="#FFFFFF">What is the…</text>
+      <rect x="22" y="94" width="160" height="7" rx="3.5" fill="#4A9E9A"/>
+    </g>
+    <g transform="translate(216 96) rotate(7)">
+      <rect width="250" height="156" rx="16" fill="#9BD3CE"/>
+    </g>
+    <g transform="translate(196 120)">
+      <rect x="5" y="9" width="252" height="158" rx="16" fill="#0F0F0F" opacity=".08"/>
+      <rect width="252" height="158" rx="16" fill="#FFFFFF"/>
+      <rect x="20" y="18" width="40" height="40" rx="11" fill="#E3F4F4"/>
+      <text x="40" y="45" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="20" font-weight="700" fill="#0E8C8C">Q</text>
+      <rect x="72" y="26" width="82" height="8" rx="4" fill="#CFE5E3"/>
+      <rect x="72" y="41" width="56" height="6" rx="3" fill="#EAF3F2"/>
+      <text x="20" y="88" font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="600" fill="#16302F">Which Spanish verb</text>
+      <text x="20" y="108" font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="600" fill="#16302F">means “to go”?</text>
+      <rect x="20" y="124" width="94" height="24" rx="12" fill="#0E8C8C"/>
+      <text x="67" y="140" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="600" fill="#FFFFFF">TAP TO FLIP</text>
+      <circle cx="210" cy="132" r="12" fill="#E3F4F4"/>
+      <path d="M204 132h12M210 126v12" stroke="#0E8C8C" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <path d="m120 160 3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#0E8C8C" opacity=".35"/>
+    <path d="m520 92 2.4 6.4 6.4 2.4-6.4 2.4-2.4 6.4-2.4-6.4-6.4-2.4 6.4-2.4 2.4-6.4Z" fill="#0E8C8C" opacity=".3"/>`,
+  math: `
+    <rect width="640" height="360" fill="#FFF2DE"/>
+    <circle cx="560" cy="60" r="120" fill="#FFE4BB"/>
+    <circle cx="80" cy="310" r="72" fill="#FFF9EF"/>
+    <g stroke="#EBD3AE" stroke-width="1" opacity=".55">
+      <path d="M0 60h640M0 140h640M0 220h640M0 300h640"/>
+      <path d="M80 0v360M200 0v360M320 0v360M440 0v360M560 0v360"/>
+    </g>
+    <g transform="translate(74 78)">
+      <path d="M0 42 28 0l28 42H0Z" fill="none" stroke="#E8B563" stroke-width="3"/>
+    </g>
+    <g transform="translate(146 52)">
+      <rect x="6" y="10" width="348" height="256" rx="20" fill="#8A4B00" opacity=".08"/>
+      <rect width="348" height="256" rx="20" fill="#FFFFFF"/>
+      <text x="26" y="38" font-family="Roboto, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.4" fill="#B26A00">PRACTICE SET · 12</text>
+      <text x="26" y="120" font-family="Roboto, Arial, sans-serif" font-size="44" font-weight="700" fill="#1A1207">7 × 8 =</text>
+      <rect x="222" y="74" width="86" height="62" rx="14" fill="#FFF8EC" stroke="#E8C48D" stroke-width="1.5" stroke-dasharray="5 5"/>
+      <text x="265" y="118" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="32" font-weight="700" fill="#C2872E">?</text>
+      <g font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="600">
+        <rect x="26" y="150" width="86" height="38" rx="12" fill="#FFF4E3"/>
+        <text x="69" y="175" text-anchor="middle" fill="#8A5A12">54</text>
+        <rect x="122" y="150" width="86" height="38" rx="12" fill="#0F0F0F"/>
+        <text x="165" y="175" text-anchor="middle" fill="#FFFFFF">56</text>
+        <rect x="218" y="150" width="86" height="38" rx="12" fill="#FFF4E3"/>
+        <text x="261" y="175" text-anchor="middle" fill="#8A5A12">58</text>
+      </g>
+      <rect x="26" y="210" width="292" height="1" fill="#F0E7D8"/>
+      <g transform="translate(26 224)">
+        <circle cx="9" cy="9" r="9" fill="#E8D5B8"/><circle cx="9" cy="9" r="5" fill="#FFF2DE"/>
+        <circle cx="27" cy="9" r="9" fill="#D9C4A4"/><circle cx="27" cy="9" r="5" fill="#FFF2DE"/>
+        <circle cx="45" cy="9" r="9" fill="#F0DCBD"/><circle cx="45" cy="9" r="5" fill="#FFF2DE"/>
+        <text x="64" y="13" font-family="Roboto, Arial, sans-serif" font-size="10.5" font-weight="500" fill="#9B8568">24 students practising</text>
+      </g>
+    </g>
+    <g transform="translate(526 250)">
+      <rect width="64" height="64" rx="18" fill="#FFD79B"/>
+      <path d="M32 18v28M18 32h28" stroke="#B26A00" stroke-width="3" stroke-linecap="round"/>
+    </g>`,
+  slides: `
+    <rect width="640" height="360" fill="#EFEBFB"/>
+    <circle cx="566" cy="48" r="108" fill="#E2DAF9"/>
+    <circle cx="92" cy="316" r="88" fill="#F7F4FE"/>
+    <g transform="translate(148 46) rotate(-4)">
+      <rect width="344" height="186" rx="14" fill="#CFC3F6"/>
+      <rect x="22" y="22" width="86" height="9" rx="4.5" fill="#FFFFFF" opacity=".7"/>
+      <rect x="22" y="42" width="56" height="7" rx="3.5" fill="#FFFFFF" opacity=".45"/>
+    </g>
+    <g transform="translate(184 104)">
+      <rect x="5" y="10" width="344" height="194" rx="14" fill="#2E1A66" opacity=".1"/>
+      <rect width="344" height="194" rx="14" fill="#FFFFFF"/>
+      <path d="M0 14a14 14 0 0 1 14-14h96v194H14A14 14 0 0 1 0 180V14Z" fill="#6B4EE6"/>
+      <circle cx="55" cy="88" r="24" fill="#FFFFFF" opacity=".16"/>
+      <circle cx="55" cy="88" r="24" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity=".65"/>
+      <path d="M55 76v12l8 6" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <rect x="130" y="38" width="112" height="10" rx="5" fill="#D9D2F5"/>
+      <rect x="130" y="58" width="70" height="7" rx="3.5" fill="#EDE9FA"/>
+      <rect x="130" y="88" width="26" height="64" rx="5" fill="#B7A7F4"/>
+      <rect x="164" y="108" width="26" height="44" rx="5" fill="#8B73EE"/>
+      <rect x="198" y="76" width="26" height="76" rx="5" fill="#6B4EE6"/>
+      <rect x="244" y="138" width="76" height="26" rx="13" fill="#F1EDFD"/>
+      <text x="282" y="155" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="600" fill="#6B4EE6">SLIDE 4 / 12</text>
+    </g>
+    <path d="m512 258 3.2 8.8 8.8 3.2-8.8 3.2-3.2 8.8-3.2-8.8-8.8-3.2 8.8-3.2 3.2-8.8Z" fill="#6B4EE6" opacity=".28"/>`,
+  listening: `
+    <rect width="640" height="360" fill="#E7EFFC"/>
+    <circle cx="566" cy="62" r="108" fill="#D5E2FA"/>
+    <circle cx="74" cy="318" r="84" fill="#F3F7FE"/>
+    <g transform="translate(126 52)">
+      <rect x="6" y="10" width="320" height="270" rx="18" fill="#1F4E9E" opacity=".1"/>
+      <rect width="320" height="270" rx="18" fill="#FFFFFF"/>
+      <text x="24" y="38" font-family="Roboto, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.4" fill="#1F6DD6">SECTION 1 · QUESTIONS 1–10</text>
+      <rect x="24" y="54" width="272" height="6" rx="3" fill="#DCE7F8"/>
+      <rect x="24" y="54" width="96" height="6" rx="3" fill="#1F6DD6"/>
+      <g transform="translate(24 82)">
+        <rect width="272" height="76" rx="12" fill="#F3F7FE"/>
+        <circle cx="34" cy="38" r="20" fill="#1F6DD6"/>
+        <path d="m29 28 15 10-15 10V28Z" fill="#FFFFFF"/>
+        <g fill="#9FB8DD">
+          <rect x="68" y="22" width="150" height="7" rx="3.5"/>
+          <rect x="68" y="37" width="112" height="6" rx="3"/>
+          <rect x="68" y="50" width="132" height="6" rx="3"/>
+        </g>
+      </g>
+      <g transform="translate(24 174)">
+        <g fill="#DCE7F8">
+          <rect x="0" y="18" width="10" height="24" rx="5"/><rect x="18" y="8" width="10" height="44" rx="5"/>
+          <rect x="36" y="2" width="10" height="56" rx="5"/><rect x="54" y="14" width="10" height="32" rx="5"/>
+          <rect x="72" y="6" width="10" height="48" rx="5"/><rect x="90" y="20" width="10" height="20" rx="5"/>
+          <rect x="108" y="10" width="10" height="40" rx="5"/><rect x="126" y="4" width="10" height="52" rx="5"/>
+          <rect x="144" y="16" width="10" height="28" rx="5"/><rect x="162" y="8" width="10" height="44" rx="5"/>
+          <rect x="180" y="22" width="10" height="16" rx="5"/><rect x="198" y="12" width="10" height="36" rx="5"/>
+          <rect x="216" y="2" width="10" height="56" rx="5"/><rect x="234" y="18" width="10" height="24" rx="5"/>
+          <rect x="252" y="10" width="10" height="40" rx="5"/>
+        </g>
+      </g>
+      <g transform="translate(24 238)">
+        <rect width="128" height="22" rx="11" fill="#E7F2EA"/>
+        <text x="64" y="15" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#1E7A5A">TRACK 04 · 06:12</text>
+      </g>
+    </g>
+    <g transform="translate(500 236)">
+      <circle cx="0" cy="0" r="54" fill="#FFFFFF"/>
+      <circle cx="0" cy="0" r="54" fill="none" stroke="#CBDDF7" stroke-width="2" stroke-dasharray="4 7"/>
+      <path d="M-24-6v12M-14-18v36M-4-26v52M6-16v32M16-28v56M26-8v16" stroke="#1F6DD6" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <path d="m108 112 3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#1F6DD6" opacity=".28"/>`,
+  reading: `
+    <rect width="640" height="360" fill="#E6F3F6"/>
+    <circle cx="570" cy="76" r="110" fill="#D3E9EE"/>
+    <circle cx="74" cy="318" r="76" fill="#F2FAFC"/>
+    <ellipse cx="320" cy="288" rx="172" ry="18" fill="#0F5E6E" opacity=".08"/>
+    <path d="M320 104c-40-20-96-22-134-6v156c38-16 94-14 134 6V104Z" fill="#FFFFFF"/>
+    <path d="M320 104c40-20 96-22 134-6v156c-38-16-94-14-134 6V104Z" fill="#FBFDFE"/>
+    <path d="M320 104c-40-20-96-22-134-6v156c38-16 94-14 134 6V104Z" fill="none" stroke="#D6E6EA" stroke-width="2"/>
+    <path d="M320 104c40-20 96-22 134-6v156c-38-16-94-14-134 6V104Z" fill="none" stroke="#D6E6EA" stroke-width="2"/>
+    <path d="M320 104v156" stroke="#C4DBE1" stroke-width="2"/>
+    <g fill="#E6EFF2">
+      <rect x="210" y="132" width="84" height="6" rx="3"/><rect x="210" y="148" width="72" height="6" rx="3"/><rect x="210" y="164" width="88" height="6" rx="3"/><rect x="210" y="180" width="60" height="6" rx="3"/>
+      <rect x="210" y="202" width="80" height="6" rx="3"/><rect x="210" y="218" width="68" height="6" rx="3"/>
+      <rect x="346" y="132" width="84" height="6" rx="3"/><rect x="346" y="148" width="64" height="6" rx="3"/><rect x="346" y="164" width="88" height="6" rx="3"/><rect x="346" y="180" width="72" height="6" rx="3"/>
+      <rect x="346" y="202" width="86" height="6" rx="3"/><rect x="346" y="218" width="58" height="6" rx="3"/>
+    </g>
+    <path d="M282 100h22v46l-11-8-11 8v-46Z" fill="#FF0033"/>
+    <text x="248" y="252" font-family="Roboto, Arial, sans-serif" font-size="12" font-weight="500" fill="#7E9AA1">Chapter 4</text>
+    <text x="356" y="252" font-family="Roboto, Arial, sans-serif" font-size="12" font-weight="500" fill="#7E9AA1">Page 72</text>
+    <path d="m132 120 2.6 7 7 2.6-7 2.6-2.6 7-2.6-7-7-2.6 7-2.6 2.6-7Z" fill="#0E7490" opacity=".3"/>
+    <path d="m516 232 2.2 5.8 5.8 2.2-5.8 2.2-2.2 5.8-2.2-5.8-5.8-2.2 5.8-2.2 2.2-5.8Z" fill="#0E7490" opacity=".24"/>`,
+  science: `
+    <rect width="640" height="360" fill="#E6F4EF"/>
+    <circle cx="558" cy="52" r="110" fill="#D3EBE2"/>
+    <circle cx="70" cy="322" r="80" fill="#F3FBF7"/>
+    <g stroke="#B9E0D3" stroke-width="2" opacity=".8">
+      <path d="M96 82 128 64M128 64l14 18M128 64V36"/>
+      <circle cx="96" cy="82" r="4" fill="#B9E0D3" stroke="none"/>
+      <circle cx="128" cy="64" r="4" fill="#B9E0D3" stroke="none"/>
+      <circle cx="142" cy="82" r="4" fill="#B9E0D3" stroke="none"/>
+      <circle cx="128" cy="36" r="4" fill="#B9E0D3" stroke="none"/>
+    </g>
+    <g transform="translate(112 62)">
+      <rect x="5" y="10" width="204" height="248" rx="16" fill="#0F5E4C" opacity=".08"/>
+      <rect width="204" height="248" rx="16" fill="#FFFFFF"/>
+      <rect x="18" y="18" width="48" height="20" rx="10" fill="#E6F4EF"/>
+      <text x="42" y="32" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9" font-weight="700" letter-spacing=".6" fill="#0F766E">LAB</text>
+      <rect x="18" y="52" width="112" height="9" rx="4.5" fill="#173A34"/>
+      <rect x="18" y="68" width="70" height="6" rx="3" fill="#B7CCC6"/>
+      <rect x="18" y="90" width="168" height="1.5" fill="#EBF3F0"/>
+      <circle cx="28" cy="113" r="8" fill="#E6F4EF"/>
+      <path d="m24.5 113 2.5 2.5 4.5-5" stroke="#0F766E" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="44" y="108" width="78" height="6" rx="3" fill="#DDEAE6"/>
+      <rect x="44" y="120" width="50" height="5" rx="2.5" fill="#EFF5F3"/>
+      <circle cx="28" cy="143" r="8" fill="#E6F4EF"/>
+      <path d="m24.5 143 2.5 2.5 4.5-5" stroke="#0F766E" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="44" y="138" width="96" height="6" rx="3" fill="#DDEAE6"/>
+      <rect x="44" y="150" width="62" height="5" rx="2.5" fill="#EFF5F3"/>
+      <circle cx="28" cy="173" r="8" fill="#F2F7F5" stroke="#CADFD9" stroke-width="1.4"/>
+      <rect x="44" y="168" width="70" height="6" rx="3" fill="#E6EFEC"/>
+      <rect x="44" y="180" width="90" height="5" rx="2.5" fill="#F2F7F5"/>
+      <rect x="18" y="204" width="168" height="1.5" fill="#EBF3F0"/>
+      <circle cx="27" cy="227" r="9" fill="#D8EDE7"/>
+      <text x="27" y="231" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9" font-weight="700" fill="#0F766E">1</text>
+      <rect x="44" y="224" width="78" height="6" rx="3" fill="#E2EEEB"/>
+    </g>
+    <g transform="translate(382 78)">
+      <ellipse cx="66" cy="214" rx="76" ry="10" fill="#0F766E" opacity=".08"/>
+      <path d="M44 6h44v56l36 96q10 28-20 28H28q-30 0-20-28l36-96V6Z" fill="#FFFFFF" stroke="#0F766E" stroke-width="3"/>
+      <path d="M32 134h68l26 36q8 18-16 18H22q-24 0-16-18l26-36Z" fill="#5BD6B5"/>
+      <path d="M44 6h44" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>
+      <path d="M34 102h10M30 118h10M44 150h8M52 168h8" stroke="#9CCFC4" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="48" cy="124" r="5" fill="#34BFA0"/>
+      <circle cx="82" cy="110" r="3.5" fill="#34BFA0"/>
+      <circle cx="70" cy="152" r="4" fill="#A7E4D6"/>
+      <g transform="translate(126 30)">
+        <circle cx="16" cy="16" r="16" fill="#FFFFFF"/>
+        <circle cx="16" cy="16" r="16" fill="none" stroke="#CBE9E0" stroke-width="2"/>
+        <path d="m9 16 5 5 9-10" stroke="#0F766E" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>`,
+  exit: `
+    <rect width="640" height="360" fill="#FCEDE3"/>
+    <circle cx="86" cy="58" r="92" fill="#F9DDCB"/>
+    <circle cx="574" cy="318" r="104" fill="#FAE2D2"/>
+    <g transform="translate(124 82)">
+      <rect x="6" y="10" width="392" height="192" rx="18" fill="#7A2C08" opacity=".08"/>
+      <rect width="392" height="192" rx="18" fill="#FFFFFF"/>
+      <circle cx="0" cy="96" r="17" fill="#FCEDE3"/>
+      <circle cx="392" cy="96" r="17" fill="#FCEDE3"/>
+      <path d="M286 20v152" stroke="#E8D3C4" stroke-width="2" stroke-dasharray="5 6"/>
+      <text x="28" y="46" font-family="Roboto, Arial, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.6" fill="#C2410C">UNIT 4 EXAM</text>
+      <text x="28" y="78" font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="600" fill="#23150D">Explain one cause of Cold</text>
+      <text x="28" y="98" font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="600" fill="#23150D">War tension.</text>
+      <rect x="28" y="126" width="230" height="1.5" fill="#EFE3D9"/>
+      <rect x="28" y="144" width="208" height="1.5" fill="#EFE3D9"/>
+      <rect x="28" y="162" width="150" height="1.5" fill="#EFE3D9"/>
+      <g transform="translate(302 44)">
+        <rect width="66" height="26" rx="13" fill="#FFF1E7"/>
+        <text x="33" y="17" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="700" fill="#C2410C">28 ITEMS</text>
+      </g>
+      <g transform="translate(302 84)">
+        <circle cx="32" cy="16" r="16" fill="#FDF1E8" stroke="#E8C0A4" stroke-width="1.5"/>
+        <text x="32" y="21" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="700" fill="#C2410C">3</text>
+        <text x="32" y="50" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9" font-weight="600" fill="#9A6B54">sections</text>
+        <circle cx="32" cy="76" r="16" fill="#FDF1E8" stroke="#E8C0A4" stroke-width="1.5"/>
+        <text x="32" y="81" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="15" font-weight="700" fill="#C2410C">2</text>
+        <text x="32" y="110" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9" font-weight="600" fill="#9A6B54">sources</text>
+      </g>
+    </g>
+    <g transform="translate(500 226)">
+      <rect width="68" height="68" rx="18" fill="#FFFFFF"/>
+      <path d="m23 35 8 8 16-18" stroke="#C2410C" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <circle cx="538" cy="72" r="5" fill="#F3C6A6"/>
+    <circle cx="560" cy="94" r="3" fill="#F3C6A6"/>
+    <circle cx="100" cy="286" r="4" fill="#F3C6A6"/>`,
+  bingo: `
+    <rect width="640" height="360" fill="#FCE8F1"/>
+    <circle cx="560" cy="52" r="110" fill="#F7D2E1"/>
+    <circle cx="72" cy="318" r="80" fill="#FEF4F8"/>
+    <g transform="translate(120 26)">
+      <rect x="6" y="10" width="328" height="304" rx="18" fill="#7A0C36" opacity=".08"/>
+      <rect width="328" height="304" rx="18" fill="#FFFFFF"/>
+      <g font-family="Roboto, Arial, sans-serif" font-size="13" font-weight="700" fill="#BE185D" text-anchor="middle">
+        <text x="54" y="38">B</text><text x="109" y="38">I</text><text x="164" y="38">N</text><text x="219" y="38">G</text><text x="274" y="38">O</text>
+      </g>
+      <g font-family="Roboto, Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle">
+        <g fill="#FDF3F7" stroke="#F4E3EB" stroke-width="1">
+          <rect x="29" y="54" width="50" height="36" rx="7"/><rect x="84" y="54" width="50" height="36" rx="7"/><rect x="139" y="54" width="50" height="36" rx="7"/><rect x="194" y="54" width="50" height="36" rx="7"/><rect x="249" y="54" width="50" height="36" rx="7"/>
+          <rect x="29" y="95" width="50" height="36" rx="7"/><rect x="84" y="95" width="50" height="36" rx="7"/><rect x="139" y="95" width="50" height="36" rx="7"/><rect x="194" y="95" width="50" height="36" rx="7"/><rect x="249" y="95" width="50" height="36" rx="7"/>
+          <rect x="29" y="136" width="50" height="36" rx="7"/><rect x="84" y="136" width="50" height="36" rx="7"/><rect x="194" y="136" width="50" height="36" rx="7"/><rect x="249" y="136" width="50" height="36" rx="7"/>
+          <rect x="29" y="177" width="50" height="36" rx="7"/><rect x="84" y="177" width="50" height="36" rx="7"/><rect x="139" y="177" width="50" height="36" rx="7"/><rect x="194" y="177" width="50" height="36" rx="7"/><rect x="249" y="177" width="50" height="36" rx="7"/>
+          <rect x="29" y="218" width="50" height="36" rx="7"/><rect x="84" y="218" width="50" height="36" rx="7"/><rect x="139" y="218" width="50" height="36" rx="7"/><rect x="194" y="218" width="50" height="36" rx="7"/><rect x="249" y="218" width="50" height="36" rx="7"/>
+        </g>
+        <g fill="#6B4A57">
+          <text x="54" y="76">3</text><text x="109" y="76">7</text><text x="164" y="76">14</text><text x="219" y="76">22</text><text x="274" y="76">31</text>
+          <text x="54" y="117">9</text><text x="109" y="117">18</text><text x="164" y="117">27</text><text x="219" y="117">35</text><text x="274" y="117">41</text>
+          <text x="54" y="158">2</text><text x="109" y="158">16</text><text x="274" y="158">54</text>
+          <text x="54" y="199">11</text><text x="109" y="199">21</text><text x="164" y="199">33</text><text x="219" y="199">47</text><text x="274" y="199">62</text>
+          <text x="54" y="240">5</text><text x="109" y="240">24</text><text x="164" y="240">38</text><text x="219" y="240">51</text><text x="274" y="240">70</text>
+        </g>
+        <g fill="#BE185D">
+          <rect x="249" y="54" width="50" height="36" rx="7"/><rect x="194" y="54" width="50" height="36" rx="7"/>
+          <rect x="249" y="136" width="50" height="36" rx="7"/><rect x="194" y="177" width="50" height="36" rx="7"/>
+          <rect x="139" y="136" width="50" height="36" rx="7"/>
+        </g>
+        <g fill="#FFFFFF" font-weight="700">
+          <text x="274" y="76">31</text><text x="219" y="76">22</text>
+          <text x="274" y="158">54</text><text x="219" y="199">47</text>
+          <text x="164" y="158">FREE</text>
+        </g>
+      </g>
+      <text x="164" y="282" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="500" fill="#B98A9C">Mark a space when you hear the word</text>
+    </g>
+    <g transform="translate(524 250)">
+      <circle r="52" fill="#FFFFFF" opacity=".9"/>
+      <circle r="42" fill="#BE185D"/>
+      <circle r="42" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4 5" opacity=".5"/>
+      <text y="-4" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="11" font-weight="600" fill="#FBD3E3">B</text>
+      <text y="22" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">7</text>
+    </g>
+    <circle cx="90" cy="176" r="5" fill="#F2ABC8"/>
+    <circle cx="566" cy="126" r="4" fill="#F2ABC8"/>`,
+  timeline: `
+    <rect width="640" height="360" fill="#E9F0FD"/>
+    <circle cx="88" cy="64" r="96" fill="#DCE7FB"/>
+    <circle cx="576" cy="316" r="100" fill="#D9E6FA"/>
+    <g transform="translate(106 64)">
+      <rect x="6" y="10" width="428" height="232" rx="18" fill="#153A75" opacity=".08"/>
+      <rect width="428" height="232" rx="18" fill="#FFFFFF"/>
+      <rect x="24" y="22" width="128" height="22" rx="11" fill="#E9F0FD"/>
+      <text x="88" y="37" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="700" letter-spacing=".8" fill="#2563EB">THE INDUSTRIAL AGE</text>
+      <path d="M40 130h348" stroke="#D9E4F8" stroke-width="3" stroke-linecap="round"/>
+      <g font-family="Roboto, Arial, sans-serif" font-size="8.5" font-weight="600" fill="#8BA5CE" text-anchor="middle">
+        <g transform="translate(80 130)">
+          <circle r="9" fill="#2563EB"/><circle r="16" fill="none" stroke="#BFD3F6" stroke-width="2"/>
+          <rect x="-48" y="-70" width="96" height="46" rx="9" fill="#F5F8FE"/>
+          <text x="0" y="-52">1760</text>
+          <rect x="-36" y="-42" width="72" height="6" rx="3" fill="#D6E2F7"/>
+        </g>
+        <g transform="translate(175 130)">
+          <circle r="7" fill="#2563EB"/>
+          <rect x="-48" y="24" width="96" height="46" rx="9" fill="#F5F8FE"/>
+          <text x="0" y="42">1820</text>
+          <rect x="-36" y="52" width="62" height="6" rx="3" fill="#D6E2F7"/>
+        </g>
+        <g transform="translate(270 130)">
+          <circle r="7" fill="#2563EB"/>
+          <rect x="-48" y="-70" width="96" height="46" rx="9" fill="#F5F8FE"/>
+          <text x="0" y="-52">1870</text>
+          <rect x="-36" y="-42" width="58" height="6" rx="3" fill="#D6E2F7"/>
+        </g>
+        <g transform="translate(365 130)">
+          <circle r="8" fill="#FF0033"/>
+          <circle r="15" fill="none" stroke="#FFB3C2" stroke-width="5" opacity=".4"/>
+          <rect x="-48" y="24" width="96" height="46" rx="9" fill="#FFF1F4"/>
+          <text x="0" y="42" fill="#D6335A">1900</text>
+          <rect x="-36" y="52" width="72" height="6" rx="3" fill="#F5C9D4"/>
+        </g>
+      </g>
+      <text x="40" y="204" font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="500" fill="#8BA5CE">Drag to reorder · 4 events</text>
+    </g>
+    <g transform="translate(556 84)">
+      <rect width="46" height="46" rx="14" fill="#BBD1F4"/>
+      <path d="M15 31h16M15 23h16M15 15h9" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round"/>
+    </g>`,
+  spelling: `
+    <rect width="640" height="360" fill="#EFF6E7"/>
+    <circle cx="560" cy="62" r="106" fill="#DCEECB"/>
+    <circle cx="80" cy="318" r="82" fill="#F8FCF4"/>
+    <text x="320" y="92" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2.4" fill="#6B8B3F">SPELLING · SET 4</text>
+    <g font-family="Roboto, Arial, sans-serif" font-size="34" font-weight="700" text-anchor="middle">
+      <g transform="translate(164 148) rotate(-5)">
+        <rect x="4" y="6" width="66" height="72" rx="12" fill="#0F0F0F" opacity=".08"/><rect width="66" height="72" rx="12" fill="#FFFFFF"/><text x="33" y="47" fill="#2F4A1A">L</text>
+      </g>
+      <g transform="translate(246 142) rotate(3)">
+        <rect x="4" y="6" width="66" height="72" rx="12" fill="#0F0F0F" opacity=".08"/><rect width="66" height="72" rx="12" fill="#FFFFFF"/><text x="33" y="47" fill="#2F4A1A">E</text>
+      </g>
+      <g transform="translate(328 146) rotate(-2)">
+        <rect x="4" y="6" width="66" height="72" rx="12" fill="#0F0F0F" opacity=".12"/><rect width="66" height="72" rx="12" fill="#4D7C0F"/><text x="33" y="47" fill="#FFFFFF">A</text>
+      </g>
+      <g transform="translate(410 140) rotate(4)">
+        <rect x="4" y="6" width="66" height="72" rx="12" fill="#0F0F0F" opacity=".08"/><rect width="66" height="72" rx="12" fill="#FFFFFF"/><text x="33" y="47" fill="#2F4A1A">R</text>
+      </g>
+      <g transform="translate(492 146) rotate(-4)">
+        <rect x="4" y="6" width="66" height="72" rx="12" fill="#0F0F0F" opacity=".08"/><rect width="66" height="72" rx="12" fill="#FFFFFF"/><text x="33" y="47" fill="#2F4A1A">N</text>
+      </g>
+    </g>
+    <text x="320" y="264" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="12" font-weight="500" fill="#86A15C">Listen, then build the word</text>
+    <g transform="translate(126 92) rotate(12)">
+      <rect width="12" height="44" rx="6" fill="#F2C94C"/><rect x="0" y="36" width="12" height="10" rx="3" fill="#E8B93B"/>
+    </g>
+    <g transform="translate(524 158)">
+      <circle r="28" fill="#FFFFFF"/>
+      <path d="M-10-5h6l9-7v24l-9-7h-6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2Z" fill="#4D7C0F"/>
+      <path d="M10-7a11 11 0 0 1 0 14M14-11a17 17 0 0 1 0 22" stroke="#7BA33F" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+    <path d="m522 266 3.4 9.2 9.2 3.4-9.2 3.4-3.4 9.2-3.4-9.2-9.2-3.4 9.2-3.4 3.4-9.2Z" fill="#7BA33F" opacity=".35"/>
+    <circle cx="544" cy="104" r="4" fill="#9DBB6C"/>
+    <circle cx="114" cy="286" r="5" fill="#A9C47C"/>`,
+  rubric: `
+    <rect width="640" height="360" fill="#EDF0F4"/>
+    <circle cx="88" cy="62" r="96" fill="#DDE3EA"/>
+    <circle cx="572" cy="318" r="102" fill="#E3E8EE"/>
+    <g transform="translate(128 58)">
+      <rect x="6" y="10" width="368" height="252" rx="18" fill="#0F172A" opacity=".08"/>
+      <rect width="368" height="252" rx="18" fill="#FFFFFF"/>
+      <text x="24" y="38" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="1.4" fill="#64748B">ESSAY RUBRIC</text>
+      <rect x="24" y="54" width="146" height="8" rx="4" fill="#DDE3EA"/>
+      <rect x="24" y="76" width="320" height="1.5" fill="#EEF1F5"/>
+      <g font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="600" fill="#8B98A8">
+        <text x="24" y="96">CRITERIA</text><text x="264" y="96">1</text><text x="292" y="96">2</text><text x="320" y="96">3</text>
+      </g>
+      <rect x="24" y="106" width="320" height="1" fill="#F2F4F7"/>
+      <text x="24" y="130" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="500" fill="#475467">Thesis &amp; argument</text>
+      <circle cx="268" cy="126" r="7" fill="#F1F3F6"/><circle cx="296" cy="126" r="7" fill="#F1F3F6"/>
+      <circle cx="324" cy="126" r="7" fill="#0F9F6E"/>
+      <path d="m320.5 126 2.5 2.5 4.5-5" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="24" y="146" width="320" height="1" fill="#F2F4F7"/>
+      <text x="24" y="170" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="500" fill="#475467">Use of evidence</text>
+      <circle cx="268" cy="166" r="7" fill="#F1F3F6"/><circle cx="296" cy="166" r="7" fill="#E8A93B"/><circle cx="324" cy="166" r="7" fill="#F1F3F6"/>
+      <rect x="24" y="186" width="320" height="1" fill="#F2F4F7"/>
+      <text x="24" y="210" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="500" fill="#475467">Organization</text>
+      <circle cx="268" cy="206" r="7" fill="#F1F3F6"/><circle cx="296" cy="206" r="7" fill="#F1F3F6"/>
+      <circle cx="324" cy="206" r="7" fill="#0F9F6E"/>
+      <path d="m320.5 206 2.5 2.5 4.5-5" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="24" y="226" width="320" height="1" fill="#F2F4F7"/>
+      <text x="24" y="242" font-family="Roboto, Arial, sans-serif" font-size="9.5" font-weight="500" fill="#A0AAB6">4 criteria · 3 performance levels</text>
+    </g>
+    <g transform="translate(548 168)">
+      <circle cx="0" cy="0" r="58" fill="#FFFFFF"/>
+      <circle cx="0" cy="0" r="50" fill="none" stroke="#E5EAF0" stroke-width="8"/>
+      <circle cx="0" cy="0" r="50" fill="none" stroke="#0F9F6E" stroke-width="8" stroke-linecap="round" stroke-dasharray="235 314" transform="rotate(-90)"/>
+      <text x="0" y="4" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="26" font-weight="700" fill="#15251C">92</text>
+      <text x="0" y="22" text-anchor="middle" font-family="Roboto, Arial, sans-serif" font-size="8.5" font-weight="600" letter-spacing=".8" fill="#7B8A82">OUT OF 100</text>
+    </g>
+    <g transform="translate(512 254)">
+      <rect width="76" height="30" rx="15" fill="#FFFFFF"/>
+      <circle cx="17" cy="15" r="4" fill="#0F9F6E"/>
+      <text x="27" y="19" font-family="Roboto, Arial, sans-serif" font-size="10" font-weight="600" fill="#475467">Grade A</text>
+    </g>`
+};
+
+const state = {
+  query: '',
+  active: 'all',
+  order: NAV_ORDER.slice(),
+  favorites: new Set()
+};
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+const catScroll = $('#catScroll');
+const catPrev = $('#catPrev');
+const catNext = $('#catNext');
+const catFadeLeft = $('#catFadeLeft');
+const catFadeRight = $('#catFadeRight');
+const toolGrid = $('#toolGrid');
+const emptyState = $('#emptyState');
+const emptyCopy = $('#emptyCopy');
+const searchForm = $('#searchForm');
+const searchInput = $('#searchInput');
+const live = $('#live');
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
+function artHTML(type) {
+  return `<svg class="art-svg" viewBox="0 0 640 360" aria-hidden="true" focusable="false">${ART[type] || ART.worksheet}</svg>`;
+}
+
+function viewsLabel(views) {
+  const count = Number(views) || 0;
+  return `${count.toLocaleString('en-US')} ${count === 1 ? 'view' : 'views'}`;
+}
+
+function avatarInner(user) {
+  return user.avatar
+    ? `<img src="${escapeHTML(user.avatar)}" alt="">`
+    : escapeHTML(user.initials);
+}
+
+function relativeTime(timestamp) {
+  const ms = Number(timestamp) || 0;
+  if (!ms) return 'just now';
+  const diff = Math.max(0, Date.now() - ms);
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  if (diff < minute) return 'just now';
+  if (diff < hour) {
+    const count = Math.floor(diff / minute);
+    return `${count} ${count === 1 ? 'minute' : 'minutes'} ago`;
+  }
+  if (diff < day) {
+    const count = Math.floor(diff / hour);
+    return `${count} ${count === 1 ? 'hour' : 'hours'} ago`;
+  }
+  const count = Math.floor(diff / day);
+  return `${count} ${count === 1 ? 'day' : 'days'} ago`;
+}
+
+function publishedContent() {
+  return TeacherTools.publishing.list().map((item) => ({
+    ...item,
+    updated: relativeTime(item.updatedAt)
+  }));
+}
+
+function allContent() {
+  return publishedContent();
+}
+
+function getContent(id) {
+  return allContent().find((item) => item.id === id);
+}
+
+function contentURL(id) {
+  return `${location.href.split('#')[0]}#content=${id}`;
+}
+
+function profileURL(id) {
+  return `${location.href.split('#')[0].replace(/[^/]*$/, '')}profile.html?user=${encodeURIComponent(id)}`;
+}
+
+function cardHTML(item, index) {
+  const tool = TOOLS[item.tool] || { label: item.kind || 'Content' };
+  const user = USERS[item.creator] || { name:'Teacher', initials:'?', bg:'#F2F2F2', fg:'#0F0F0F' };
+  return `
+    <article class="tool-card" data-content-id="${item.id}" style="--i:${index}">
+      <a class="thumb" href="#content=${item.id}" target="_blank" rel="noopener" aria-label="Open “${escapeHTML(item.title)}” in a new tab">
+        ${artHTML(item.art)}
+        <span class="thumb-cta" aria-hidden="true">
+          <svg class="icon"><use href="#ic-maximize"/></svg>Open
+        </span>
+      </a>
+      <div class="tool-info">
+        <a class="creator-avatar" href="${profileURL(item.creator)}" data-name="${escapeHTML(user.name)}" aria-label="View ${escapeHTML(user.name)}’s profile" style="--cat-bg:${user.bg};--cat-fg:${user.fg}">${avatarInner(user)}</a>
+        <div class="tool-main">
+          <div class="tool-header">
+            <a class="tool-title-btn" href="#content=${item.id}" target="_blank" rel="noopener" aria-label="Open “${escapeHTML(item.title)}” in a new tab">${escapeHTML(item.title)}</a>
+            <button class="tool-menu-btn" type="button" data-menu="${item.id}" aria-haspopup="true" aria-expanded="false" aria-label="More options for ${escapeHTML(item.title)}">
+              <svg class="icon" aria-hidden="true"><use href="#ic-dots"/></svg>
+            </button>
+          </div>
+          <p class="tool-meta">
+            <span>${escapeHTML(tool.label)}</span>
+            <span class="sep" aria-hidden="true">·</span>
+            <a class="tool-creator" href="${profileURL(item.creator)}">${escapeHTML(user.name)}</a>
+            <span class="sep" aria-hidden="true">·</span>
+            <span>${viewsLabel(item.views)}</span>
+          </p>
+        </div>
+      </div>
+    </article>`;
+}
+
+function matches(item) {
+  if (state.active !== 'all') {
+    const [type, id] = state.active.split(':');
+    if (type === 'group' && item.group !== id) return false;
+    if (type === 'tool' && item.tool !== id) return false;
+  }
+  if (!state.query) return true;
+  const tool = TOOLS[item.tool];
+  const group = GROUPS_BY_ID[item.group];
+  const user = USERS[item.creator];
+  const haystack = `${item.title} ${tool ? tool.label : ''} ${group ? group.label : ''} ${user ? user.name : ''} ${item.desc || ''}`.toLowerCase();
+  return state.query.toLowerCase().split(/\s+/).filter(Boolean).every((term) => haystack.includes(term));
+}
+
+function renderTools() {
+  const list = allContent().filter(matches);
+  toolGrid.innerHTML = list.map(cardHTML).join('');
+  toolGrid.hidden = list.length === 0;
+  emptyState.hidden = list.length > 0;
+
+  if (!list.length) {
+    emptyCopy.textContent = state.query
+      ? `No content matches “${state.query}”${state.active === 'all' ? '' : ` in ${NAV_BY_KEY[state.active].label}`}. Try a different keyword or category.`
+      : state.active === 'all'
+        ? 'Published content will appear here once teachers post it.'
+        : `There is no content in ${NAV_BY_KEY[state.active].label} yet.`;
+  }
+
+  live.textContent = `${list.length} ${list.length === 1 ? 'content item' : 'content items'} shown${state.query ? ` for ${state.query}` : ''}.`;
+  closeToolMenu();
+}
+
+function renderCategories(focusKey) {
+  catScroll.innerHTML = state.order.map((key) => `
+    <button class="cat-pill" type="button" data-cat="${key}" aria-pressed="${state.active === key}">
+      ${escapeHTML(NAV_BY_KEY[key].label)}
+    </button>`).join('');
+
+  if (focusKey) {
+    const active = catScroll.querySelector(`[data-cat="${focusKey}"]`);
+    if (active) active.focus({ preventScroll: true });
+  }
+  requestAnimationFrame(updateCatArrows);
+}
+
+function scrollPageTopIfNeeded() {
+  if (window.scrollY > 90) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectCategory(key) {
+  const changed = state.active !== key || state.order[1] !== key;
+  state.active = key;
+  state.order = ['all', ...(key === 'all' ? [] : [key]), ...state.order.filter((item) => item !== 'all' && item !== key)];
+  renderCategories(key);
+  renderTools();
+  catScroll.scrollTo({ left: 0, behavior: 'smooth' });
+  if (changed) scrollPageTopIfNeeded();
+}
+
+function clearFilters() {
+  state.query = '';
+  state.active = 'all';
+  state.order = NAV_ORDER.slice();
+  searchInput.value = '';
+  renderCategories();
+  renderTools();
+}
+
+function updateCatArrows() {
+  const max = catScroll.scrollWidth - catScroll.clientWidth;
+  const canScroll = max > 4;
+  const atStart = catScroll.scrollLeft <= 4;
+  const atEnd = catScroll.scrollLeft >= max - 4;
+
+  catPrev.hidden = !(canScroll && !atStart);
+  catNext.hidden = !(canScroll && !atEnd);
+  catFadeLeft.hidden = !(canScroll && !atStart);
+  catFadeRight.hidden = !(canScroll && !atEnd);
+}
+
+catScroll.addEventListener('scroll', updateCatArrows, { passive: true });
+
+catNext.addEventListener('click', () => {
+  catScroll.scrollBy({ left: Math.max(240, catScroll.clientWidth * 0.7), behavior: 'smooth' });
+});
+
+catPrev.addEventListener('click', () => {
+  catScroll.scrollBy({ left: -Math.max(240, catScroll.clientWidth * 0.7), behavior: 'smooth' });
+});
+
+catScroll.addEventListener('click', (event) => {
+  const pill = event.target.closest('[data-cat]');
+  if (pill) selectCategory(pill.dataset.cat);
+});
+
+searchForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  state.query = searchInput.value.trim();
+  state.active = 'all';
+  state.order = ['all', ...state.order.filter((key) => key !== 'all')];
+  renderCategories();
+  renderTools();
+  updateCatArrows();
+  scrollPageTopIfNeeded();
+  if (document.body.classList.contains('builder-mode')) location.hash = 'home';
+});
+
+searchInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && searchInput.value) {
+    searchInput.value = '';
+    state.query = '';
+    renderTools();
+  }
+});
+
+$('#clearFilters').addEventListener('click', () => {
+  clearFilters();
+  scrollPageTopIfNeeded();
+  searchInput.focus();
+});
+
+toolGrid.addEventListener('click', (event) => {
+  const menuBtn = event.target.closest('[data-menu]');
+  if (menuBtn) {
+    if (menuBtn.getAttribute('aria-expanded') === 'true') closeToolMenu();
+    else openToolMenu(menuBtn, menuBtn.dataset.menu);
+    return;
+  }
+
+  if (event.target.closest('a, button')) return;
+  const card = event.target.closest('[data-content-id]');
+  if (card) window.open(contentURL(card.dataset.contentId), '_blank', 'noopener');
+});
+
+/* ---------- Content menu ---------- */
+const toolMenu = $('#toolMenu');
+let menuContentId = null;
+let menuAnchor = null;
+
+function updateToolMenuFavorite() {
+  const item = toolMenu.querySelector('[data-action="favorite"]');
+  const isFav = state.favorites.has(menuContentId);
+  item.classList.toggle('is-fav', isFav);
+  item.querySelector('span').textContent = isFav ? 'Remove from favorites' : 'Add to favorites';
+}
+
+function positionToolMenu(button) {
+  const rect = button.getBoundingClientRect();
+  const menuRect = toolMenu.getBoundingClientRect();
+  let top = rect.bottom + 8;
+  if (top + menuRect.height > window.innerHeight - 12) top = rect.top - menuRect.height - 8;
+  const left = Math.max(12, Math.min(rect.right - menuRect.width, window.innerWidth - menuRect.width - 12));
+  toolMenu.style.top = `${Math.max(12, top)}px`;
+  toolMenu.style.left = `${left}px`;
+}
+
+function openToolMenu(button, id) {
+  closeHeaderMenus();
+  closeToolMenu();
+  menuContentId = id;
+  menuAnchor = button;
+  toolMenu.hidden = false;
+  updateToolMenuFavorite();
+  positionToolMenu(button);
+  button.setAttribute('aria-expanded', 'true');
+}
+
+function closeToolMenu() {
+  if (toolMenu.hidden) return;
+  toolMenu.hidden = true;
+  if (menuAnchor) menuAnchor.setAttribute('aria-expanded', 'false');
+  menuAnchor = null;
+  menuContentId = null;
+}
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.style.position = 'fixed';
+  area.style.opacity = '0';
+  document.body.appendChild(area);
+  area.select();
+  try { document.execCommand('copy'); } finally { area.remove(); }
+  return Promise.resolve();
+}
+
+toolMenu.addEventListener('click', async (event) => {
+  const item = event.target.closest('[data-action]');
+  if (!item) return;
+  const action = item.dataset.action;
+  const content = getContent(menuContentId);
+  if (!content) return;
+
+  if (action === 'open') {
+    closeToolMenu();
+    window.open(contentURL(content.id), '_blank', 'noopener');
+  } else if (action === 'favorite') {
+    if (state.favorites.has(content.id)) {
+      state.favorites.delete(content.id);
+      showToast(`Removed “${content.title}” from favorites.`);
+    } else {
+      state.favorites.add(content.id);
+      showToast(`Added “${content.title}” to favorites.`);
+    }
+    closeToolMenu();
+  } else if (action === 'copy') {
+    closeToolMenu();
+    try {
+      await copyText(contentURL(content.id));
+      showToast('Content link copied to clipboard.');
+    } catch {
+      showToast('Could not copy the link. Try again.');
+    }
+  }
+});
+
+/* ---------- Header menus ---------- */
+const accountAnchor = $('#accountAnchor');
+const accountBtn = $('#accountBtn');
+const accountMenu = $('#accountMenu');
+const accountProfileLink = $('#accountProfileLink');
+const accountSignOut = $('#accountSignOut');
+const accountAvatar = $('#accountAvatar');
+const signInBtn = $('#signInBtn');
+
+const headerMenus = [
+  { button: $('#bellBtn'), menu: $('#notifMenu') },
+  { button: accountBtn, menu: accountMenu }
+];
+
+function closeHeaderMenus(except) {
+  headerMenus.forEach(({ button, menu }) => {
+    if (menu === except) return;
+    if (!menu.hidden) {
+      menu.hidden = true;
+      button.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+function toggleHeaderMenu(button, menu) {
+  const willOpen = menu.hidden;
+  closeHeaderMenus(menu);
+  closeToolMenu();
+  menu.hidden = !willOpen;
+  button.setAttribute('aria-expanded', String(willOpen));
+}
+
+headerMenus.forEach(({ button, menu }) => {
+  button.addEventListener('click', () => toggleHeaderMenu(button, menu));
+});
+
+document.addEventListener('pointerdown', (event) => {
+  if (!event.target.closest('.menu-anchor') && !event.target.closest('#toolMenu') && !event.target.closest('[data-menu]')) {
+    closeHeaderMenus();
+    closeToolMenu();
+  }
+});
+
+/* ---------- Account menu and session ---------- */
+function syncAccount() {
+  const userId = TeacherTools.session.getUserId();
+  const signedIn = !!userId;
+  accountAnchor.hidden = !signedIn;
+  signInBtn.hidden = signedIn;
+  if (!signedIn) {
+    closeHeaderMenus();
+    return;
+  }
+  const user = USERS[userId] || USERS[CURRENT_USER_ID];
+  accountProfileLink.href = profileURL(userId);
+  accountBtn.setAttribute('aria-label', `${user.name} — account menu`);
+  accountAvatar.innerHTML = avatarInner(user);
+  accountAvatar.style.background = user.bg;
+  accountAvatar.style.color = user.fg;
+}
+
+function signOutCurrent() {
+  TeacherTools.session.signOut();
+  closeHeaderMenus();
+  syncAccount();
+  if (document.body.classList.contains('builder-mode') || document.body.classList.contains('doc-mode')) {
+    location.hash = 'home';
+  }
+  showToast('Signed out.');
+}
+
+accountMenu.addEventListener('click', (event) => {
+  if (event.target.closest('#accountSignOut')) {
+    event.preventDefault();
+    signOutCurrent();
+    return;
+  }
+  if (event.target.closest('#accountProfileLink')) closeHeaderMenus();
+});
+
+signInBtn.addEventListener('click', () => {
+  const userId = TeacherTools.session.signIn(CURRENT_USER_ID);
+  closeHeaderMenus();
+  syncAccount();
+  showToast(`Signed in as ${USERS[userId].name}.`);
+});
+
+window.addEventListener('teachertools:authchange', syncAccount);
+
+/* ---------- Appearance ---------- */
+const themeButtons = $$('.theme-option');
+const themeLabel = { light: 'Light', dark: 'Dark' };
+
+function syncThemeButtons() {
+  const active = TeacherTools.theme.get();
+  themeButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.themeValue === active));
+  });
+}
+
+themeButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const value = button.dataset.themeValue;
+    TeacherTools.theme.set(value);
+    syncThemeButtons();
+    showToast(`${themeLabel[value] || value} theme applied.`);
+  });
+});
+
+window.addEventListener('teachertools:themechange', syncThemeButtons);
+
+/* ---------- Create modal ---------- */
+const DEFAULT_TOOL_GROUP = 'ielts';
+const toolModal = $('#toolModal');
+const toolList = $('#toolList');
+const toolSelect = $('#toolCategory');
+const createBtn = $('#createBtn');
+
+function toolOptionHTML(toolId) {
+  const tool = TOOLS[toolId];
+  const inner = `
+    <span class="tool-option-ic" aria-hidden="true"><svg class="icon"><use href="#ic-${tool.icon}"/></svg></span>
+    <span class="tool-option-copy"><strong>${escapeHTML(tool.name)}</strong><span>${escapeHTML(tool.desc)}</span></span>`;
+  const style = `style="--tool-bg:${tool.bg};--tool-fg:${tool.fg}"`;
+  if (tool.soon) {
+    return `<button class="tool-option is-soon" type="button" data-tool="${toolId}" ${style}>
+      ${inner}<span class="tool-soon">Coming soon</span>
+    </button>`;
+  }
+  return `<a class="tool-option" href="${tool.href}" target="_blank" rel="noopener" data-tool="${toolId}" ${style} aria-label="Open ${escapeHTML(tool.name)} in a new tab">
+    ${inner}<span class="tool-option-go" aria-hidden="true">Open<svg class="icon"><use href="#ic-maximize"/></svg></span>
+  </a>`;
+}
+
+function renderToolList(groupId) {
+  const group = GROUPS_BY_ID[groupId];
+  if (!group) return;
+  if (!group.tools.length) {
+    toolList.innerHTML = `
+      <div class="tool-empty">
+        <svg class="icon" aria-hidden="true"><use href="#ic-puzzle"/></svg>
+        <strong>No tools in ${escapeHTML(group.label)} yet</strong>
+        <span>New builders will appear here as they become available.</span>
+      </div>`;
+    return;
+  }
+  toolList.innerHTML = group.tools.map(toolOptionHTML).join('');
+}
+
+toolSelect.innerHTML = TOOL_GROUPS.map((group) => `<option value="${group.id}">${escapeHTML(group.label)}</option>`).join('');
+toolSelect.value = DEFAULT_TOOL_GROUP;
+renderToolList(DEFAULT_TOOL_GROUP);
+toolSelect.addEventListener('change', () => renderToolList(toolSelect.value));
+
+function closeToolModal() {
+  if (toolModal.open) toolModal.close();
+}
+
+function openToolModal() {
+  closeHeaderMenus();
+  closeToolMenu();
+  setDrawer(false);
+  toolSelect.value = DEFAULT_TOOL_GROUP;
+  renderToolList(DEFAULT_TOOL_GROUP);
+  toolModal.showModal();
+  document.body.classList.add('modal-open');
+}
+
+createBtn.addEventListener('click', openToolModal);
+$('#toolModalClose').addEventListener('click', closeToolModal);
+toolModal.addEventListener('close', () => document.body.classList.remove('modal-open'));
+toolModal.addEventListener('click', (event) => {
+  if (event.target === toolModal) closeToolModal();
+});
+toolList.addEventListener('click', (event) => {
+  const option = event.target.closest('[data-tool]');
+  if (!option) return;
+  const tool = TOOLS[option.dataset.tool];
+  closeToolModal();
+  if (tool && tool.soon) showToast(`${tool.name} builder is coming soon.`);
+});
+
+const notifBadge = $('#notifBadge');
+const bellBtn = $('#bellBtn');
+const markRead = $('#markRead');
+
+function syncNotifications() {
+  const unread = $$('.notif-item:not(.read)').length;
+  notifBadge.textContent = unread;
+  notifBadge.hidden = unread === 0;
+  bellBtn.setAttribute('aria-label', unread ? `Notifications, ${unread} unread` : 'Notifications, no unread');
+  markRead.disabled = unread === 0;
+  markRead.textContent = unread === 0 ? 'All caught up' : 'Mark all read';
+}
+
+markRead.addEventListener('click', () => {
+  $$('.notif-item').forEach((item) => item.classList.add('read'));
+  syncNotifications();
+  showToast('All notifications marked as read.');
+});
+
+$$('[data-notif]').forEach((item) => {
+  item.addEventListener('click', () => {
+    item.classList.add('read');
+    syncNotifications();
+    closeHeaderMenus();
+    showToast('Notification opened.');
+  });
+});
+
+$('#viewAllNotifs').addEventListener('click', () => {
+  closeHeaderMenus();
+  showToast('You are all caught up.');
+});
+
+/* ---------- Sidebar and drawer ---------- */
+const menuToggle = $('#menuToggle');
+const sidebarOverlay = $('#sidebarOverlay');
+
+function setDrawer(open) {
+  document.body.classList.toggle('nav-open', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+}
+
+menuToggle.addEventListener('click', () => setDrawer(!document.body.classList.contains('nav-open')));
+sidebarOverlay.addEventListener('click', () => setDrawer(false));
+
+$$('.side-link[data-nav]').forEach((link) => {
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    $$('.side-link[data-nav]').forEach((item) => {
+      item.classList.remove('active');
+      item.removeAttribute('aria-current');
+    });
+    link.classList.add('active');
+    link.setAttribute('aria-current', 'page');
+    setDrawer(false);
+
+    if (link.dataset.nav === 'Home') {
+      clearFilters();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+});
+
+$$('.class-link').forEach((link) => link.addEventListener('click', (event) => event.preventDefault()));
+
+$('#logoHome').addEventListener('click', (event) => {
+  event.preventDefault();
+  if (document.body.classList.contains('builder-mode')) {
+    location.hash = 'home';
+    return;
+  }
+  const home = $('.side-link[data-nav="Home"]');
+  $$('.side-link[data-nav]').forEach((item) => {
+    item.classList.remove('active');
+    item.removeAttribute('aria-current');
+  });
+  home.classList.add('active');
+  home.setAttribute('aria-current', 'page');
+  clearFilters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setDrawer(false);
+});
+
+window.addEventListener('resize', () => {
+  updateCatArrows();
+  if (window.innerWidth > 980) setDrawer(false);
+});
+
+/* ---------- Content, profile, and builder pages ---------- */
+const docView = $('#docView');
+const builderView = $('#builderView');
+const countedViews = new Set();
+const homeTitle = document.title;
+const BUILDERS = {
+  reading:   { frame: $('#builderFrame'),   title: 'IELTS Reading Test Builder' },
+  listening: { frame: $('#listeningFrame'), title: 'IELTS Listening Test Builder' }
+};
+const builderLoaded = new Set();
+let activeBuilder = null;
+
+function loadBuilder(kind) {
+  const builder = BUILDERS[kind];
+  if (!builder) return false;
+  Object.entries(BUILDERS).forEach(([id, item]) => { item.frame.hidden = id !== kind; });
+  if (!builder.themeHooked) {
+    builder.frame.addEventListener('load', () => TeacherTools.theme.notifyFrame(builder.frame));
+    builder.themeHooked = true;
+  }
+  if (!builderLoaded.has(kind)) {
+    builder.frame.src = builder.frame.dataset.src;
+    builderLoaded.add(kind);
+  } else {
+    TeacherTools.theme.notifyFrame(builder.frame);
+  }
+  activeBuilder = kind;
+  return true;
+}
+
+function docBarHTML(label) {
+  return `
+    <header class="doc-bar">
+      <a class="doc-logo" href="#home" aria-label="Teacher Tools home">LOGO</a>
+      <span class="doc-bar-sep" aria-hidden="true"></span>
+      <a class="doc-back" href="#home">
+        <svg class="icon" aria-hidden="true"><use href="#ic-chev-left"/></svg>Back to Homepage
+      </a>
+      <span class="doc-bar-spacer"></span>
+      <span class="doc-bar-label">${escapeHTML(label)}</span>
+    </header>`;
+}
+
+function questionsHTML(prompts) {
+  return `<ol class="doc-questions">${prompts.map((prompt, i) => `
+    <li class="doc-question">
+      <p class="doc-prompt"><b>${i + 1}.</b>${prompt}</p>
+      <div class="doc-answer-line"></div>
+      <div class="doc-answer-line"></div>
+    </li>`).join('')}</ol>`;
+}
+
+function docBodyHTML(item) {
+  const tool = TOOLS[item.tool];
+  const info = `
+    <div class="doc-info-grid">
+      <div class="doc-info"><span>Format</span><strong>${escapeHTML(tool.label)}</strong></div>
+      <div class="doc-info"><span>Included</span><strong>${escapeHTML(item.detail)}</strong></div>
+      <div class="doc-info"><span>Updated</span><strong>${escapeHTML(item.updated)}</strong></div>
+    </div>`;
+  const intro = `<p class="doc-intro">${escapeHTML(item.desc)}</p>`;
+  let body = '';
+
+  if (item.kind === 'lesson') {
+    body = `
+      <h2>Learning objectives</h2>
+      <ul>
+        <li>Explain the core ideas behind ${escapeHTML(item.title)} in their own words.</li>
+        <li>Connect the lesson to a real-world example students already recognize.</li>
+        <li>Apply the new vocabulary during a short collaborative task.</li>
+      </ul>
+      <h2>Lesson outline</h2>
+      <ol>
+        <li><strong>Warm-up (5 min):</strong> A quick prompt to surface prior knowledge.</li>
+        <li><strong>Direct instruction (12 min):</strong> Introduce key vocabulary with a visual anchor.</li>
+        <li><strong>Guided practice (15 min):</strong> Students work in pairs with teacher checkpoints.</li>
+        <li><strong>Independent task (10 min):</strong> Apply the concept individually.</li>
+        <li><strong>Exit ticket (3 min):</strong> One question that captures the big idea.</li>
+      </ol>
+      <h2>Materials</h2>
+      <ul><li>Slides and printed handouts</li><li>Whiteboard or chart paper</li><li>Exit tickets (included)</li></ul>
+      <div class="doc-note"><strong>Teacher tip:</strong> Pause after the guided practice to check for understanding before releasing students to the independent task.</div>`;
+  } else if (item.kind === 'quiz' || item.kind === 'test') {
+    const noun = item.kind === 'test' ? 'test' : 'quiz';
+    body = `
+      <hr class="doc-rule">
+      <h2>Before you begin</h2>
+      <p>Answer every question in the space provided. Show your reasoning where it helps. This ${noun} is designed to be completed in a single class period.</p>
+      <h2>Questions</h2>
+      ${questionsHTML([
+        `Define the key vocabulary from this ${noun} in your own words.`,
+        'Describe one cause and one effect connected to the main topic.',
+        'Give an example from class or real life that illustrates the main concept.',
+        'Compare two ideas from this unit and explain how they are different.',
+        'Summarize the big idea in three sentences.'
+      ])}
+      <div class="doc-note"><strong>Included with the full version:</strong> answer key, scoring guide, and a differentiated version for students who need extra support.</div>`;
+  } else if (item.kind === 'exercise') {
+    body = `
+      <hr class="doc-rule">
+      <h2>Practice set</h2>
+      <p>Work through each problem in order. Show your steps so your teacher can see your thinking.</p>
+      ${questionsHTML([
+        'Warm-up: solve the first problem and explain the strategy you chose.',
+        'Show your work for a multi-step example and check your answer.',
+        'Find the mistake in the worked example and correct it.',
+        'Try the challenge problem. Explain why your answer makes sense.',
+        'Write a similar problem of your own for a classmate to solve.'
+      ])}
+      <div class="doc-note"><strong>Answer key:</strong> included at the end of the full practice set, with worked solutions for the challenge problems.</div>`;
+  } else if (item.kind === 'worksheet') {
+    body = `
+      <hr class="doc-rule">
+      <h2>Name / Date</h2>
+      <p>Student name: ______________________________ &nbsp; Date: ______________</p>
+      <h2>Directions</h2>
+      <p>Read each prompt carefully and respond in the space provided. Use complete sentences and refer to the text when it helps your answer.</p>
+      <h2>Prompts</h2>
+      ${questionsHTML([
+        'Respond to the opening prompt in two or three sentences.',
+        'Find an example in the text and explain why it fits the concept.',
+        'Write your own example that follows the same pattern.',
+        'Explain how your example would change in a different context.',
+        'Reflect: what was the easiest part of this worksheet? What was hardest?'
+      ])}
+      <div class="doc-note"><strong>Printing tip:</strong> pages are designed for letter-size paper with generous writing space.</div>`;
+  } else if (item.kind === 'flashcards') {
+    const pairs = item.pairs || [];
+    body = `
+      <hr class="doc-rule">
+      <h2>Deck preview</h2>
+      <div class="doc-term-grid">
+        ${pairs.map(([term, definition]) => `<div class="doc-term"><strong>${escapeHTML(term)}</strong><span>${escapeHTML(definition)}</span></div>`).join('')}
+      </div>
+      <h2>Study tips</h2>
+      <ul>
+        <li>Review five cards at a time, then shuffle before the next round.</li>
+        <li>Say the answer out loud before flipping the card.</li>
+        <li>Mark the cards you miss and revisit them the next day.</li>
+      </ul>
+      <div class="doc-note"><strong>Digital deck:</strong> the full version includes all ${escapeHTML(item.detail)} with audio pronunciation and shuffle mode.</div>`;
+  } else if (item.kind === 'presentation') {
+    body = `
+      <hr class="doc-rule">
+      <h2>Slide overview</h2>
+      <ol>
+        <li><strong>Title & learning goal:</strong> Frame the question students will be able to answer.</li>
+        <li><strong>Warm-up prompt:</strong> A quick discussion starter projected as students enter.</li>
+        <li><strong>Core concept:</strong> Vocabulary and a labeled visual anchor.</li>
+        <li><strong>Worked example:</strong> Walk through one example together.</li>
+        <li><strong>Quick check:</strong> A pause-and-think slide to surface misconceptions.</li>
+        <li><strong>Wrap-up:</strong> The big idea in one sentence, plus the exit ticket.</li>
+      </ol>
+      <div class="doc-note"><strong>Presenter notes:</strong> every slide includes speaker notes, timing suggestions, and prompts for discussion.</div>`;
+  } else {
+    body = `
+      <hr class="doc-rule">
+      <h2>How to play</h2>
+      <ol>
+        <li>Share a board with each student or pair and review the term list.</li>
+        <li>Read a clue aloud and give students a moment to mark their board.</li>
+        <li>Ask a student to explain the connection before moving on.</li>
+        <li>Play until someone completes a row, column, or full board.</li>
+      </ol>
+      <h2>What is included</h2>
+      <ul>
+        <li>30 unique printable boards</li>
+        <li>A call list with clues and definitions</li>
+        <li>A blank template for adding your own terms</li>
+      </ul>
+      <div class="doc-note"><strong>Low-prep:</strong> print, project the call list, and you are ready for review in under five minutes.</div>`;
+  }
+
+  return intro + info + body;
+}
+
+function renderPublishedContentPage(item) {
+  const tool = TOOLS[item.tool] || { label: item.kind || 'Content', icon:'file', bg:'#F2F2F2', fg:'#0F0F0F' };
+  const user = USERS[item.creator] || { name:'Teacher', initials:'?', bg:'#F2F2F2', fg:'#0F0F0F' };
+  if (!countedViews.has(item.id)) {
+    countedViews.add(item.id);
+    TeacherTools.publishing.incrementViews(item.id);
+  }
+  const fresh = TeacherTools.publishing.get(item.id) || item;
+  const payload = TeacherTools.publishing.getPayload(item.id);
+  docView.innerHTML = `
+    ${docBarHTML(tool.label)}
+    <main class="doc-main doc-main--published">
+      <article class="doc-article">
+        <div class="doc-kicker">
+          <span class="doc-type" style="--cat-bg:${tool.bg};--cat-fg:${tool.fg}">
+            <svg class="icon" aria-hidden="true"><use href="#ic-${tool.icon}"/></svg>${escapeHTML(tool.label)}
+          </span>
+          <span class="doc-updated">Published ${relativeTime(fresh.createdAt)}</span>
+        </div>
+        <h1 class="doc-title">${escapeHTML(item.title)}</h1>
+        <div class="doc-byline">
+          <a class="doc-creator" href="${profileURL(item.creator)}">
+            <span class="creator-avatar creator-avatar--lg" data-name="${escapeHTML(user.name)}" style="--cat-bg:${user.bg};--cat-fg:${user.fg}">${avatarInner(user)}</span>
+            <span class="doc-creator-copy">
+              <strong>${escapeHTML(user.name)}</strong>
+              <span>Creator</span>
+            </span>
+          </a>
+          <span class="doc-detail">
+            <svg class="icon" aria-hidden="true"><use href="#ic-eye"/></svg>${viewsLabel(fresh.views)}
+          </span>
+        </div>
+        <div class="doc-published-meta">
+          <span class="doc-detail"><svg class="icon" aria-hidden="true"><use href="#ic-${tool.icon}"/></svg>${escapeHTML(item.detail || 'Published resource')}</span>
+          <span class="doc-detail"><svg class="icon" aria-hidden="true"><use href="#ic-layers"/></svg>${escapeHTML(GROUPS_BY_ID[item.group] ? GROUPS_BY_ID[item.group].label : 'Content')}</span>
+        </div>
+      </article>
+      <div class="pub-frame-wrap">
+        ${payload
+          ? `<iframe class="pub-frame" id="pubFrame" title="${escapeHTML(item.title)}" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-downloads"></iframe>`
+          : `<div class="pub-missing">This published file could not be loaded. Try publishing it again from the builder.</div>`}
+      </div>
+    </main>`;
+  const frame = docView.querySelector('#pubFrame');
+  if (frame) frame.srcdoc = payload;
+  document.title = `${item.title} — Teacher Tools`;
+  return true;
+}
+
+function renderContentPage(id) {
+  const item = getContent(id);
+  if (!item) return false;
+  if (item.published) return renderPublishedContentPage(item);
+  const tool = TOOLS[item.tool];
+  const user = USERS[item.creator];
+
+  docView.innerHTML = `
+    ${docBarHTML(tool.label)}
+    <main class="doc-main">
+      <article class="doc-article">
+        <div class="doc-kicker">
+          <span class="doc-type" style="--cat-bg:${tool.bg};--cat-fg:${tool.fg}">
+            <svg class="icon" aria-hidden="true"><use href="#ic-${tool.icon}"/></svg>${escapeHTML(tool.label)}
+          </span>
+          <span class="doc-updated">Updated ${escapeHTML(item.updated)}</span>
+        </div>
+        <h1 class="doc-title">${escapeHTML(item.title)}</h1>
+        <div class="doc-byline">
+          <a class="doc-creator" href="${profileURL(item.creator)}">
+            <span class="creator-avatar creator-avatar--lg" data-name="${escapeHTML(user.name)}" style="--cat-bg:${user.bg};--cat-fg:${user.fg}">${avatarInner(user)}</span>
+            <span class="doc-creator-copy">
+              <strong>${escapeHTML(user.name)}</strong>
+              <span>${escapeHTML(user.role)} · ${escapeHTML(user.school)}</span>
+            </span>
+          </a>
+          <span class="doc-detail">
+            <svg class="icon" aria-hidden="true"><use href="#ic-${tool.icon}"/></svg>${escapeHTML(item.detail)}
+          </span>
+        </div>
+        <div class="doc-cover">${artHTML(item.art)}</div>
+        <div class="doc-body">${docBodyHTML(item)}</div>
+      </article>
+    </main>`;
+  document.title = `${item.title} — Teacher Tools`;
+  return true;
+}
+
+function route() {
+  const hash = location.hash.replace(/^#/, '');
+  const [mode, ...rest] = hash.split('=');
+  const value = rest.join('=');
+  let rendered = false;
+  let inBuilder = false;
+
+  if (mode === 'content') rendered = renderContentPage(value);
+  else if (mode === 'builder' && BUILDERS[value]) {
+    inBuilder = loadBuilder(value);
+  }
+
+  document.body.classList.toggle('doc-mode', rendered);
+  document.body.classList.toggle('builder-mode', inBuilder);
+  docView.hidden = !rendered;
+  builderView.hidden = !inBuilder;
+
+  if (!rendered && !inBuilder) {
+    docView.innerHTML = '';
+    document.title = homeTitle;
+    renderTools();
+    if (hash === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  closeToolMenu();
+  closeHeaderMenus();
+  closeToolModal();
+  setDrawer(false);
+  window.scrollTo(0, 0);
+  if (inBuilder) document.title = `${BUILDERS[activeBuilder].title} — Teacher Tools`;
+}
+
+window.addEventListener('hashchange', route);
+
+docView.addEventListener('click', (event) => {
+  if (event.target.closest('a, button')) return;
+  const card = event.target.closest('[data-content-id]');
+  if (card) window.open(contentURL(card.dataset.contentId), '_blank', 'noopener');
+});
+
+/* ---------- Toast ---------- */
+const toast = $('#toast');
+const toastText = $('#toastText');
+let toastTimer = null;
+
+function showToast(message) {
+  toastText.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* ---------- Global shortcuts ---------- */
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeToolMenu();
+    closeHeaderMenus();
+    setDrawer(false);
+  }
+
+  const tag = document.activeElement ? document.activeElement.tagName : '';
+  const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  if (event.key === '/' && !typing && !document.body.classList.contains('doc-mode')) {
+    event.preventDefault();
+    searchInput.focus();
+  }
+});
+
+window.addEventListener('scroll', () => {
+  closeToolMenu();
+  closeHeaderMenus();
+}, true);
+
+/* ---------- Cross-tab / cross-frame sync ---------- */
+window.addEventListener('storage', (event) => {
+  if (!event.key || !event.key.startsWith('teacherTools.')) return;
+  applySavedProfiles();
+  syncAccount();
+  syncThemeButtons();
+  syncNotifications();
+  renderTools();
+});
+
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || data.type !== 'teachertools:published') return;
+  const item = data.item || {};
+  const title = item.title || 'Content';
+  renderTools();
+  if (data.duplicate) showToast(`“${title}” updated on the website.`);
+  else showToast(`“${title}” posted to the website.`);
+});
+
+/* ---------- Init ---------- */
+syncThemeButtons();
+syncAccount();
+
+renderCategories();
+renderTools();
+syncNotifications();
+route();
+new ResizeObserver(() => updateCatArrows()).observe(catScroll);
+window.addEventListener('load', updateCatArrows);
+</script>
+</body>
+</html>
